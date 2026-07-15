@@ -4,58 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COLLECTION | ASIDI</title>
+    <!-- 引入 Google 免费且稳定的克罗心同款高街哥特字体库 -->
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 奢侈品核心：极简黑白、高级留白与古典衬线字体 */
+        /* 1. 暗黑高街奢品风格：全黑背景，白色强对比 */
         body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
-            color: #111111;
-            font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Cinzel', serif; /* 默认英文采用古典衬线 */
             letter-spacing: 2px;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* 2. 导航栏修改：融入哥特元素 */
         header {
             padding: 30px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #1a1a1a; /* 暗灰色细线 */
         }
 
+        /* 品牌 LOGO 赋予强烈的克罗心哥特体灵魂 */
         .brand-logo {
-            font-size: 24px;
-            font-weight: bold;
+            font-family: 'UnifrakturMaguntia', cursive; 
+            font-size: 36px; /* 哥特体适当放大更有张力 */
             text-transform: uppercase;
             text-decoration: none;
-            color: #000;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
         .nav-links a {
             margin-left: 30px;
             text-decoration: none;
-            color: #666;
+            color: #888888;
             font-size: 13px;
             text-transform: uppercase;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
         }
-        .nav-links a:hover { color: #000; }
+        .nav-links a:hover { 
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        }
 
+        /* 3. 商品货架布局 */
         .container {
             max-width: 1200px;
             margin: 60px auto;
             padding: 0 20px;
         }
 
+        /* 大标题使用哥特体 */
         .collection-title {
             text-align: center;
-            font-size: 28px;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 40px;
             margin-bottom: 60px;
-            text-transform: uppercase;
             font-weight: 300;
+            color: #ffffff;
+            letter-spacing: 3px;
         }
 
-        /* 存放商品的网格大盒子 */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -64,12 +77,11 @@
 
         .product-card {
             text-align: center;
-            opacity: 0; /* 初始隐藏，配合动画 */
+            opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.8s forwards ease;
         }
 
-        /* 优雅的入场动效 */
         @keyframes fadeIn {
             to {
                 opacity: 1;
@@ -77,60 +89,76 @@
             }
         }
 
+        /* 商品图片框：深邃的暗黑背景 */
         .product-image-wrapper {
-            background-color: #f9f9f9;
+            background-color: #0a0a0a;
             overflow: hidden;
             margin-bottom: 15px;
             aspect-ratio: 3 / 4;
             display: flex;
             justify-content: center;
             align-items: center;
+            border: 1px solid #111111;
+            transition: border-color 0.4s;
+        }
+        .product-card:hover .product-image-wrapper {
+            border-color: #333333; /* 悬停时边框微亮 */
         }
 
         .product-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s ease;
+            transition: transform 0.6s ease, filter 0.6s ease;
+            filter: grayscale(20%); /* 略微降低饱和度，更有高冷摇滚感 */
         }
         .product-card:hover img {
             transform: scale(1.03);
+            filter: grayscale(0%);
         }
 
+        /* 商品名字 */
         .product-name {
             font-size: 14px;
-            margin: 10px 0 5px 0;
+            margin: 18px 0 6px 0;
             text-transform: uppercase;
             font-weight: 400;
+            color: #ffffff;
         }
 
+        /* 商品价格 */
         .product-price {
             font-size: 13px;
-            color: #888;
-            margin-bottom: 15px;
+            color: #666666;
+            margin-bottom: 18px;
         }
 
+        /* 4. 克罗心风银质/反色购买按钮 */
         .buy-btn {
             display: inline-block;
-            background-color: #111111;
-            color: #ffffff;
-            padding: 10px 30px;
-            font-size: 12px;
+            background-color: #ffffff; /* 反色设计：黑底白按钮 */
+            color: #000000;
+            padding: 12px 35px;
+            font-size: 11px;
+            font-weight: bold;
             text-transform: uppercase;
             text-decoration: none;
-            border: 1px solid #111111;
+            border: 1px solid #ffffff;
             transition: all 0.3s ease;
+            letter-spacing: 3px;
         }
         .buy-btn:hover {
-            background-color: #ffffff;
-            color: #111111;
+            background-color: #000000;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="#" class="brand-logo">ASIDI</a>
+        <!-- 这里的 LOGO 已经是华丽的哥特体 -->
+        <a href="#" class="brand-logo">Asidi</a>
         <div class="nav-links">
             <a href="#">Shop</a>
             <a href="#">Story</a>
@@ -139,24 +167,23 @@
     </header>
 
     <div class="container">
-        <h2 class="collection-title">The New Collection</h2>
+        <!-- 华丽暗黑的主题大标题 -->
+        <h2 class="collection-title">The Dark Collection</h2>
         
-        <!-- 核心：这个盒子原本是空的，JavaScript 会自动往里面塞商品 -->
+        <!-- 商品的核心动力舱 -->
         <div class="product-grid" id="gridBox"></div>
     </div>
 
     <script>
-        // 核心黑魔法：异步读取你的 json 账本文件
+        // 动态读取你的 products.json 账本
         fetch('products.json')
             .then(response => response.json())
             .then(products => {
                 const gridBox = document.getElementById('gridBox');
                 
-                // 循环账本里的每一个商品，动态织出 HTML 代码
                 products.forEach((product, index) => {
                     const card = document.createElement('div');
                     card.className = 'product-card';
-                    // 让商品卡片错开时间优雅入场
                     card.style.animationDelay = `${index * 0.15}s`; 
                     
                     card.innerHTML = `
@@ -171,7 +198,7 @@
                     gridBox.appendChild(card);
                 });
             })
-            .catch(error => console.error('读取商品账本失败:', error));
+            .catch(error => console.error('读取暗黑商品账本失败:', error));
     </script>
 
 </body>
