@@ -27,15 +27,15 @@
             border-bottom: 1px solid #1c1c1c; 
         }
 
-        /* 品牌 LOGO：已恢复全小写，并大幅调大字号，增强视觉分量 */
+        /* 品牌 LOGO：去掉 font-weight: bold，恢复字体本来的纤细与古典韵味 */
         .brand-logo {
             font-family: 'UnifrakturMaguntia', cursive; 
-            font-size: 44px; /* 电脑端从 32px 大幅升级至 44px */
+            font-size: 48px; /* 进一步整体放大，视觉更舒展 */
             text-decoration: none;
             color: #ffffff;
             letter-spacing: 0.5px;
-            text-transform: lowercase; /* 恢复全小写 */
-            font-weight: bold;
+            text-transform: lowercase; 
+            font-weight: 400; /* 严格保留字体原本的美感，绝不加粗 */
         }
 
         .nav-links a {
@@ -67,9 +67,10 @@
             color: #ffffff;
         }
 
+        /* ✅ 电脑端商品大小优化：控制每张图的最高上限尺寸，大屏下也会保持优雅比例，不显粗笨 */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 50px;
         }
 
@@ -221,7 +222,7 @@
         }
 
         /* ==========================================
-           🚨 手机端高定制修改（大尺寸 LOGO 优化）
+           🚨 手机端高定制修改（大LOGO与单列图保留）
            ========================================== */
         @media screen and (max-width: 768px) {
             header {
@@ -230,11 +231,12 @@
                 gap: 15px;
             }
 
-            /* 手机端同步调大 LOGO，保留小写排版 */
+            /* 手机端放大 LOGO，同时确保没有加粗 */
             .brand-logo {
-                font-size: 26px; /* 手机端升级至 26px，更加醒目 */
+                font-size: 28px; 
                 letter-spacing: 0.5px;
                 text-align: center;
+                font-weight: 400; 
             }
 
             .nav-links a {
@@ -252,6 +254,7 @@
                 margin-bottom: 40px;
             }
 
+            /* ✅ 手机上的商品大小继续完美维持不变 */
             .product-grid {
                 grid-template-columns: 1fr; 
                 gap: 45px; 
@@ -287,7 +290,7 @@
 <body>
 
     <header>
-        <!-- 大尺寸全小写先锋 LOGO -->
+        <!-- 不加粗、大尺寸的纯粹哥格特 LOGO -->
         <a href="#" class="brand-logo">andseethingsasido</a>
         <div class="nav-links">
             <a href="#">商店</a>
