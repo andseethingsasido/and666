@@ -4,51 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COLLECTION | ASIDI</title>
-    <!-- 引入 Google 免费且稳定的克罗心同款高街哥特字体库 -->
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 引入最接近《纽约时报》报头的复古哥特体，以及纽时新闻正文的经典报业衬线体 -->
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        /* 1. 暗黑高街奢品风格：全黑背景，白色强对比 */
+        /* 1. 纯黑底色与经典报业印刷白字对比 */
         body {
             margin: 0;
             padding: 0;
             background-color: #000000;
             color: #ffffff;
-            font-family: 'Cinzel', serif; /* 默认英文采用古典衬线 */
-            letter-spacing: 2px;
+            /* 全局默认采用纽时新闻正文风格的优雅衬线体 */
+            font-family: 'Playfair Display', 'Georgia', serif; 
+            letter-spacing: 1px;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 2. 导航栏修改：融入哥特元素 */
+        /* 2. 顶部导航栏：经典庄重布局 */
         header {
-            padding: 30px 50px;
+            padding: 35px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #1a1a1a; /* 暗灰色细线 */
+            border-bottom: 1px solid #1c1c1c; /* 极细暗调分割线 */
         }
 
-        /* 品牌 LOGO 赋予强烈的克罗心哥特体灵魂 */
+        /* 品牌 LOGO：精准重现《纽约时报》报头那种厚重的哥特艺术感 */
         .brand-logo {
             font-family: 'UnifrakturMaguntia', cursive; 
-            font-size: 36px; /* 哥特体适当放大更有张力 */
-            text-transform: uppercase;
+            font-size: 40px; 
             text-decoration: none;
             color: #ffffff;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
         }
 
         .nav-links a {
-            margin-left: 30px;
+            margin-left: 35px;
             text-decoration: none;
-            color: #888888;
-            font-size: 13px;
+            color: #aaaaaa;
+            font-size: 14px;
             text-transform: uppercase;
-            transition: all 0.3s ease;
+            transition: color 0.3s ease;
         }
         .nav-links a:hover { 
             color: #ffffff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
         }
 
         /* 3. 商品货架布局 */
@@ -58,21 +56,20 @@
             padding: 0 20px;
         }
 
-        /* 大标题使用哥特体 */
+        /* 主标题使用纽时哥特体 */
         .collection-title {
             text-align: center;
             font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 40px;
-            margin-bottom: 60px;
-            font-weight: 300;
+            font-size: 46px;
+            margin-bottom: 70px;
+            font-weight: 400;
             color: #ffffff;
-            letter-spacing: 3px;
         }
 
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
+            gap: 50px;
         }
 
         .product-card {
@@ -89,75 +86,74 @@
             }
         }
 
-        /* 商品图片框：深邃的暗黑背景 */
+        /* 商品图片框：深邃全黑，凸显大片 */
         .product-image-wrapper {
-            background-color: #0a0a0a;
+            background-color: #080808;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             aspect-ratio: 3 / 4;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #111111;
-            transition: border-color 0.4s;
+            border: 1px solid #161616;
+            transition: border-color 0.4s ease;
         }
         .product-card:hover .product-image-wrapper {
-            border-color: #333333; /* 悬停时边框微亮 */
+            border-color: #333333;
         }
 
         .product-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s ease, filter 0.6s ease;
-            filter: grayscale(20%); /* 略微降低饱和度，更有高冷摇滚感 */
+            transition: transform 0.8s ease;
         }
         .product-card:hover img {
-            transform: scale(1.03);
-            filter: grayscale(0%);
+            transform: scale(1.02);
         }
 
-        /* 商品名字 */
+        /* 商品名称：采用充满旧时代诗意与力量感的哥特体 */
         .product-name {
-            font-size: 14px;
-            margin: 18px 0 6px 0;
-            text-transform: uppercase;
-            font-weight: 400;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 24px; /* 哥特体带有独特的舒展感 */
+            margin: 15px 0 8px 0;
             color: #ffffff;
+            letter-spacing: 0.5px;
         }
 
-        /* 商品价格 */
+        /* 商品价格：经典的斜体印刷报纸风，高级且清晰 */
         .product-price {
-            font-size: 13px;
-            color: #666666;
-            margin-bottom: 18px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 15px;
+            color: #888888;
+            margin-bottom: 20px;
         }
 
-        /* 4. 克罗心风银质/反色购买按钮 */
+        /* 4. 极致内敛的白金主义购买按钮 */
         .buy-btn {
             display: inline-block;
-            background-color: #ffffff; /* 反色设计：黑底白按钮 */
+            background-color: #ffffff;
             color: #000000;
-            padding: 12px 35px;
-            font-size: 11px;
+            padding: 12px 40px;
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
             text-decoration: none;
             border: 1px solid #ffffff;
             transition: all 0.3s ease;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
         .buy-btn:hover {
             background-color: #000000;
             color: #ffffff;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <!-- 这里的 LOGO 已经是华丽的哥特体 -->
+        <!-- 完美的纽时哥特体 LOGO -->
         <a href="#" class="brand-logo">Asidi</a>
         <div class="nav-links">
             <a href="#">Shop</a>
@@ -167,15 +163,15 @@
     </header>
 
     <div class="container">
-        <!-- 华丽暗黑的主题大标题 -->
-        <h2 class="collection-title">The Dark Collection</h2>
+        <!-- 时代周刊/大报质感的暗黑大标题 -->
+        <h2 class="collection-title">The Chronicle</h2>
         
-        <!-- 商品的核心动力舱 -->
+        <!-- 自动渲染数据的大盒子 -->
         <div class="product-grid" id="gridBox"></div>
     </div>
 
     <script>
-        // 动态读取你的 products.json 账本
+        // 动态读取同级目录下的 products.json
         fetch('products.json')
             .then(response => response.json())
             .then(products => {
@@ -198,7 +194,7 @@
                     gridBox.appendChild(card);
                 });
             })
-            .catch(error => console.error('读取暗黑商品账本失败:', error));
+            .catch(error => console.error('读取纽时风商品账本失败:', error));
     </script>
 
 </body>
