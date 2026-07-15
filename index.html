@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>系列选集 | andseethingsasido</title>
+    <title>在售 | ANDSEETHINGSASIDO</title>
     <!-- 引入纽时报头风格的复古哥特体，以及经典报业衬线体 -->
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
@@ -27,14 +27,14 @@
             border-bottom: 1px solid #1c1c1c; 
         }
 
-        /* 品牌 LOGO：完整的先锋小写哥特品牌名 */
+        /* 品牌 LOGO：升级为极具冲击力的全大写哥特品牌名 */
         .brand-logo {
             font-family: 'UnifrakturMaguntia', cursive; 
             font-size: 32px; 
             text-decoration: none;
             color: #ffffff;
-            letter-spacing: 0.5px;
-            text-transform: lowercase; 
+            letter-spacing: 1px;
+            text-transform: uppercase; 
         }
 
         .nav-links a {
@@ -143,7 +143,7 @@
             color: #ffffff;
         }
 
-        /* 4. 二维码弹窗系统（基础样式） */
+        /* 4. 二维码弹窗系统 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -220,72 +220,62 @@
         }
 
         /* ==========================================
-           🚨 手机端独家高定制核心代码（响应式断点）
+           🚨 手机端高定制修改（单列大气大图尺寸）
            ========================================== */
         @media screen and (max-width: 768px) {
-            /* 手机端导航栏压缩内边距，改为上下垂直或者更紧凑的通栏 */
             header {
-                padding: 20px 20px;
-                flex-direction: column; /* 名字在上，菜单在下，留出呼吸空间 */
+                padding: 25px 20px;
+                flex-direction: column; 
                 gap: 15px;
             }
 
-            /* 核心：缩减手机端长品牌名字号，确保绝不换行 */
             .brand-logo {
-                font-size: 20px; 
-                letter-spacing: 0px;
+                font-size: 18px; 
+                letter-spacing: 1px;
                 text-align: center;
             }
 
-            /* 手机端导航菜单 */
             .nav-links a {
-                margin: 0 15px; /* 缩短字与字间距 */
+                margin: 0 15px; 
                 font-size: 13px;
             }
 
-            /* 主容器缩减边距，防止留白过大 */
             .container {
                 margin: 30px auto;
-                padding: 0 15px;
+                padding: 0 20px;
             }
 
-            /* 主标题字号在手机上适当微调 */
             .collection-title {
                 font-size: 32px;
                 margin-bottom: 40px;
             }
 
-            /* 核心：将手机端的货架改为双列并排（若喜欢单列大图，可将 2fr 改为 1fr） */
             .product-grid {
-                grid-template-columns: 1fr 1fr; 
-                gap: 20px; /* 缩减卡片间距，更适合手机滑动 */
+                grid-template-columns: 1fr; 
+                gap: 45px; 
             }
 
-            /* 手机端商品图边距优化 */
             .product-image-wrapper {
-                margin-bottom: 10px;
+                margin-bottom: 15px;
             }
 
-            /* 手机端商品字体适当减小，防挤压错位 */
             .product-name {
-                font-size: 18px; 
-                margin: 10px 0 4px 0;
+                font-size: 24px; 
+                margin: 15px 0 6px 0;
             }
 
             .product-price {
-                font-size: 13px;
-                margin-bottom: 12px;
+                font-size: 14px;
+                margin-bottom: 15px;
             }
 
-            /* 手机端按钮改为紧凑型 */
             .buy-btn {
-                padding: 8px 20px;
-                font-size: 11px;
-                width: 80%; /* 让按钮在卡片内更匀称 */
-                box-sizing: border-box;
+                padding: 12px 40px;
+                font-size: 12px;
+                width: auto; 
+                display: inline-block;
             }
 
-            /* 手机端弹窗内边距收紧 */
             .modal-content {
                 padding: 30px 20px;
             }
@@ -295,7 +285,7 @@
 <body>
 
     <header>
-        <a href="#" class="brand-logo">andseethingsasido</a>
+        <a href="#" class="brand-logo">ANDSEETHINGSASIDO</a>
         <div class="nav-links">
             <a href="#">商店</a>
             <a href="#">故事</a>
@@ -304,18 +294,18 @@
     </header>
 
     <div class="container">
-        <h2 class="collection-title">黑匣选集</h2>
+        <!-- 核心修改：大标题已变更为在售 -->
+        <h2 class="collection-title">在售</h2>
         
-        <!-- 商品容器 -->
+        <!-- 商品网格 -->
         <div class="product-grid" id="gridBox"></div>
     </div>
 
-    <!-- 二维码弹窗 HTML 结构 -->
+    <!-- 二维码弹窗 -->
     <div class="modal-overlay" id="qrcodeModal">
         <div class="modal-content">
             <span class="close-btn" id="closeTrigger">&times;</span>
             <div class="modal-title">Contact</div>
-            <!-- ⚠️ 请确保仓库根目录下有名为 qrcode.png 的图片 -->
             <img src="qrcode.png" alt="联系微信二维码" class="qrcode-img">
             <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
         </div>
