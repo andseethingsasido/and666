@@ -30,12 +30,12 @@
         /* 品牌 LOGO：去掉 font-weight: bold，恢复字体本来的纤细与古典韵味 */
         .brand-logo {
             font-family: 'UnifrakturMaguntia', cursive; 
-            font-size: 48px; /* 进一步整体放大，视觉更舒展 */
+            font-size: 48px; 
             text-decoration: none;
             color: #ffffff;
             letter-spacing: 0.5px;
             text-transform: lowercase; 
-            font-weight: 400; /* 严格保留字体原本的美感，绝不加粗 */
+            font-weight: 400; 
         }
 
         .nav-links a {
@@ -67,18 +67,23 @@
             color: #ffffff;
         }
 
-        /* ✅ 电脑端商品大小优化：控制每张图的最高上限尺寸，大屏下也会保持优雅比例，不显粗笨 */
+        /* 商品网格居中 */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 50px;
+            justify-content: center;
+            justify-items: center; /* 让卡片在格子内居中 */
         }
 
+        /* ✅ 核心修改：限制电脑端商品的最高宽度，防止在大屏幕上单张图被拉得太大 */
         .product-card {
             text-align: center;
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.8s forwards ease;
+            width: 100%;
+            max-width: 320px; /* 电脑端严格限制在此宽度内，显得紧凑精致 */
         }
 
         @keyframes fadeIn {
@@ -222,7 +227,7 @@
         }
 
         /* ==========================================
-           🚨 手机端高定制修改（大LOGO与单列图保留）
+           🚨 手机端高定制修改（手机图依然维持原状）
            ========================================== */
         @media screen and (max-width: 768px) {
             header {
@@ -231,7 +236,6 @@
                 gap: 15px;
             }
 
-            /* 手机端放大 LOGO，同时确保没有加粗 */
             .brand-logo {
                 font-size: 28px; 
                 letter-spacing: 0.5px;
@@ -254,10 +258,15 @@
                 margin-bottom: 40px;
             }
 
-            /* ✅ 手机上的商品大小继续完美维持不变 */
+            /* 手机端保持单列 */
             .product-grid {
                 grid-template-columns: 1fr; 
                 gap: 45px; 
+            }
+
+            /* ✅ 核心修正：手机端解除电脑端的 max-width 限制，使其能完全铺满，保持大气的大图样式 */
+            .product-card {
+                max-width: 100%; 
             }
 
             .product-image-wrapper {
@@ -290,7 +299,6 @@
 <body>
 
     <header>
-        <!-- 不加粗、大尺寸的纯粹哥格特 LOGO -->
         <a href="#" class="brand-logo">andseethingsasido</a>
         <div class="nav-links">
             <a href="#">商店</a>
