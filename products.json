@@ -1,0 +1,23 @@
+[
+  {
+    "id": "01",
+    "name": "Silk Trench Coat",
+    "price": "CNY 8,900",
+    "image": "item1.jpg",
+    "link": "https://xxxxx"
+  },
+  {
+    "id": "02",
+    "name": "Monogram Leather Bag",
+    "price": "CNY 14,500",
+    "image": "item2.jpg",
+    "link": "https://xxxxx"
+  },
+  {
+    "id": "03",
+    "name": "Classic Linen Shirt",
+    "price": "CNY 3,200",
+    "image": "item3.jpg",
+    "link": "https://xxxxx"
+  }
+]
