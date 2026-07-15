@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在售 | ANDSEETHINGSASIDO</title>
+    <title>在售 | andseethingsasido</title>
     <!-- 引入纽时报头风格的复古哥特体，以及经典报业衬线体 -->
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
@@ -20,21 +20,22 @@
 
         /* 2. 顶部导航栏（电脑端样式） */
         header {
-            padding: 35px 50px;
+            padding: 40px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #1c1c1c; 
         }
 
-        /* 品牌 LOGO：升级为极具冲击力的全大写哥特品牌名 */
+        /* 品牌 LOGO：已恢复全小写，并大幅调大字号，增强视觉分量 */
         .brand-logo {
             font-family: 'UnifrakturMaguntia', cursive; 
-            font-size: 32px; 
+            font-size: 44px; /* 电脑端从 32px 大幅升级至 44px */
             text-decoration: none;
             color: #ffffff;
-            letter-spacing: 1px;
-            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            text-transform: lowercase; /* 恢复全小写 */
+            font-weight: bold;
         }
 
         .nav-links a {
@@ -220,18 +221,19 @@
         }
 
         /* ==========================================
-           🚨 手机端高定制修改（单列大气大图尺寸）
+           🚨 手机端高定制修改（大尺寸 LOGO 优化）
            ========================================== */
         @media screen and (max-width: 768px) {
             header {
-                padding: 25px 20px;
+                padding: 30px 20px;
                 flex-direction: column; 
                 gap: 15px;
             }
 
+            /* 手机端同步调大 LOGO，保留小写排版 */
             .brand-logo {
-                font-size: 18px; 
-                letter-spacing: 1px;
+                font-size: 26px; /* 手机端升级至 26px，更加醒目 */
+                letter-spacing: 0.5px;
                 text-align: center;
             }
 
@@ -285,7 +287,8 @@
 <body>
 
     <header>
-        <a href="#" class="brand-logo">ANDSEETHINGSASIDO</a>
+        <!-- 大尺寸全小写先锋 LOGO -->
+        <a href="#" class="brand-logo">andseethingsasido</a>
         <div class="nav-links">
             <a href="#">商店</a>
             <a href="#">故事</a>
@@ -294,7 +297,6 @@
     </header>
 
     <div class="container">
-        <!-- 核心修改：大标题已变更为在售 -->
         <h2 class="collection-title">在售</h2>
         
         <!-- 商品网格 -->
