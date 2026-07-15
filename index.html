@@ -3,38 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COLLECTION | ASIDI</title>
-    <!-- 引入最接近《纽约时报》报头的复古哥特体，以及纽时新闻正文的经典报业衬线体 -->
+    <title>系列选集 | andseethingsasido</title>
+    <!-- 引入纽时报头风格的复古哥特体，以及经典报业衬线体 -->
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        /* 1. 纯黑底色与经典报业印刷白字对比 */
+        /* 1. 纯黑底色与经典印刷质感 */
         body {
             margin: 0;
             padding: 0;
             background-color: #000000;
             color: #ffffff;
-            /* 全局默认采用纽时新闻正文风格的优雅衬线体 */
-            font-family: 'Playfair Display', 'Georgia', serif; 
+            font-family: 'Playfair Display', 'Georgia', "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif; 
             letter-spacing: 1px;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 2. 顶部导航栏：经典庄重布局 */
+        /* 2. 顶部导航栏 */
         header {
             padding: 35px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #1c1c1c; /* 极细暗调分割线 */
+            border-bottom: 1px solid #1c1c1c; 
         }
 
-        /* 品牌 LOGO：精准重现《纽约时报》报头那种厚重的哥特艺术感 */
+        /* 品牌 LOGO：完全替换为完整长名称，展现高街解构感 */
         .brand-logo {
             font-family: 'UnifrakturMaguntia', cursive; 
-            font-size: 40px; 
+            font-size: 32px; /* 较长名称适当缩小字号以防换行 */
             text-decoration: none;
             color: #ffffff;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            text-transform: lowercase; /* 保持全小写更有独立设计师品牌的调性 */
         }
 
         .nav-links a {
@@ -42,8 +42,9 @@
             text-decoration: none;
             color: #aaaaaa;
             font-size: 14px;
-            text-transform: uppercase;
+            letter-spacing: 2px;
             transition: color 0.3s ease;
+            cursor: pointer;
         }
         .nav-links a:hover { 
             color: #ffffff;
@@ -86,7 +87,7 @@
             }
         }
 
-        /* 商品图片框：深邃全黑，凸显大片 */
+        /* 商品图片框 */
         .product-image-wrapper {
             background-color: #080808;
             overflow: hidden;
@@ -112,16 +113,15 @@
             transform: scale(1.02);
         }
 
-        /* 商品名称：采用充满旧时代诗意与力量感的哥特体 */
+        /* 商品名称：采用充满力量感的哥特体 */
         .product-name {
             font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 24px; /* 哥特体带有独特的舒展感 */
+            font-size: 26px; 
             margin: 15px 0 8px 0;
             color: #ffffff;
-            letter-spacing: 0.5px;
         }
 
-        /* 商品价格：经典的斜体印刷报纸风，高级且清晰 */
+        /* 商品价格 */
         .product-price {
             font-family: 'Playfair Display', serif;
             font-style: italic;
@@ -130,7 +130,7 @@
             margin-bottom: 20px;
         }
 
-        /* 4. 极致内敛的白金主义购买按钮 */
+        /* 纯白高光购买按钮 */
         .buy-btn {
             display: inline-block;
             background-color: #ffffff;
@@ -138,7 +138,6 @@
             padding: 12px 40px;
             font-size: 12px;
             font-weight: bold;
-            text-transform: uppercase;
             text-decoration: none;
             border: 1px solid #ffffff;
             transition: all 0.3s ease;
@@ -148,30 +147,121 @@
             background-color: #000000;
             color: #ffffff;
         }
+
+        /* 5. 优雅暗黑二维码弹窗系统 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* 极深半透明背景 */
+            backdrop-filter: blur(8px); /* 现代毛玻璃感 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        /* 当激活弹窗时 */
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: #0a0a0a;
+            border: 1px solid #222222;
+            padding: 40px;
+            text-align: center;
+            max-width: 320px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+
+        /* 二维码图片样式 */
+        .qrcode-img {
+            width: 200px;
+            height: 200px;
+            background-color: #ffffff; /* 二维码通常需要白底以便识别 */
+            padding: 10px;
+            box-sizing: border-box;
+            object-fit: contain;
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+
+        .modal-desc {
+            font-size: 12px;
+            color: #666666;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+
+        /* 右上角极简关闭按钮 */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            color: #555555;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <!-- 完美的纽时哥特体 LOGO -->
-        <a href="#" class="brand-logo">Asidi</a>
+        <!-- 完整的先锋小写哥特品牌名 -->
+        <a href="#" class="brand-logo">andseethingsasido</a>
         <div class="nav-links">
-            <a href="#">Shop</a>
-            <a href="#">Story</a>
-            <a href="#">Contact</a>
+            <a href="#">商店</a>
+            <a href="#">故事</a>
+            <!-- 给联系绑定弹窗触发事件 -->
+            <a id="connectTrigger">联系</a>
         </div>
     </header>
 
     <div class="container">
-        <!-- 时代周刊/大报质感的暗黑大标题 -->
-        <h2 class="collection-title">The Chronicle</h2>
+        <!-- 纽时风中文大标题 -->
+        <h2 class="collection-title">黑匣选集</h2>
         
-        <!-- 自动渲染数据的大盒子 -->
+        <!-- 商品容器 -->
         <div class="product-grid" id="gridBox"></div>
     </div>
 
+    <!-- 6. 二维码弹窗 HTML 结构 -->
+    <div class="modal-overlay" id="qrcodeModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeTrigger">&times;</span>
+            <div class="modal-title">Contact</div>
+            <!-- ⚠️ 请在此处替换为你仓库中真正的微信/主页二维码图片路径，例如 'images/my-wechat.jpg' -->
+            <img src="qrcode.png" alt="联系微信二维码" class="qrcode-img">
+            <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
+        </div>
+    </div>
+
     <script>
-        // 动态读取同级目录下的 products.json
+        // A. 动态读取同级目录下的 products.json 渲染货架
         fetch('products.json')
             .then(response => response.json())
             .then(products => {
@@ -188,13 +278,35 @@
                         </div>
                         <div class="product-name">${product.name}</div>
                         <div class="product-price">${product.price}</div>
-                        <a href="${product.link}" class="buy-btn" target="_blank">Inquire / Buy</a>
+                        <a href="${product.link}" class="buy-btn" target="_blank">了解 / 购买</a>
                     `;
                     
                     gridBox.appendChild(card);
                 });
             })
-            .catch(error => console.error('读取纽时风商品账本失败:', error));
+            .catch(error => console.error('读取商品数据失败:', error));
+
+        // B. 控制二维码弹窗的逻辑代码
+        const modal = document.getElementById('qrcodeModal');
+        const openBtn = document.getElementById('connectTrigger');
+        const closeBtn = document.getElementById('closeTrigger');
+
+        // 点击“联系”打开弹窗
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        // 点击右上角叉叉关闭弹窗
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // 点击弹窗以外的灰色模糊区域也能自动关闭，体验极佳
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
     </script>
 
 </body>
