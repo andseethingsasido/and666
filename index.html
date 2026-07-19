@@ -97,6 +97,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px; 
+            align-items: flex-end; /* 让链接容器整体靠右对齐 */
         }
         .menu-item {
             font-size: 18px; 
@@ -108,6 +109,11 @@
             text-transform: uppercase;
             white-space: nowrap;
             transform-origin: right center; 
+            
+            /* 🛠 通过两端对齐让“商店”与“公众号”右侧边缘完全对齐 */
+            width: 105px; 
+            text-align: justify;
+            text-align-last: justify; 
         }
         .menu-item:hover {
             color: #ffffff; 
@@ -271,7 +277,7 @@
         }
 
         .qrcode-img {
-            width: 160px; /* 维持大小不变 */
+            width: 160px; 
             height: 160px;
             object-fit: contain;
             margin: 0 auto 20px auto;
@@ -304,6 +310,7 @@
 
     <!-- ✟ 顶部导航栏（完美反转纯黑） ✟ -->
     <div id="header">
+        <!-- 🛠 已确认图片路径为 logo.png -->
         <img src="logo.png" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
         
         <div class="menu-trigger" id="menuTrigger">
@@ -332,7 +339,8 @@
         <div class="modal-content">
             <span class="close-btn" id="closeTrigger">&times;</span>
             <div class="modal-title">Contact</div>
-            <img src="qrcode.png" alt="微信二维码" class="qrcode-img">
+            <!-- 🛠 已修改图片路径为 gozhonghao.jpg -->
+            <img src="gozhonghao.jpg" alt="微信二维码" class="qrcode-img">
             <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
         </div>
     </div>
