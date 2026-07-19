@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在售 | andseethingsasido</title>
-    <!-- 引入纽时报头风格的复古哥特体，以及经典报业衬线体 -->
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>SHOP | andseethingsasido</title>
+    <!-- 引入经典衬线与等宽质感字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Courier+Prime&display=swap" rel="stylesheet">
     <style>
-        /* 1. 全白底色与经典印刷质感 */
+        /* 1. ERD 标志性冷白底色与绝对简练排版 */
         html, body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff; /* 🛠 整体底色换为纯白 */
-            color: #000000; /* 🛠 文字反向为黑色 */
-            font-family: 'Playfair Display', 'Georgia', "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif; 
-            letter-spacing: 1px;
+            background-color: #ffffff; 
+            color: #000000; 
+            font-family: "Helvetica Neue", Arial, "Courier Prime", monospace, sans-serif;
             -webkit-font-smoothing: antialiased;
             overflow-y: auto;
             scroll-behavior: smooth;
         }
         img { user-select: none; -webkit-user-drag: none; }
 
-        /* 2. ✟ 完美同步首页：风格透明固定顶部栏基础布局 ✟ */
+        /* 2. ✟ 顶部导航栏（完美反转纯黑） ✟ */
         #header {
             position: fixed;
             top: 0;
@@ -36,24 +35,23 @@
             padding: 0 40px;
         }
 
-        /* 靠左 Logo 基础样式（反向为黑色滤镜） */
+        /* 靠左 Logo 纯黑 */
         .logo-btn {
             width: auto;
             cursor: pointer;
             position: relative;
             z-index: 10003;
-            filter: invert(0); /* 默认保持原标或黑色 */
+            filter: invert(0); 
             transition: transform 0.3s, filter 0.3s; 
         }
         .logo-btn:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
-        /* 激活时反转颜色 */
         .logo-btn.active {
-            filter: invert(1);
+            filter: invert(1); /* 菜单打开时变白 */
         }
 
-        /* 右侧汉堡菜单悬停区基础样式 */
+        /* 右侧汉堡菜单（纯黑线） */
         .menu-trigger {
             position: absolute;
             right: 40px;
@@ -70,21 +68,21 @@
         .menu-trigger-icon span {
             display: block;
             width: 100%;
-            background: #000000; /* 🛠 按钮线反向为黑色 */
+            background: #000000; 
             transition: background 0.3s;
         }
         .menu-trigger.active .menu-trigger-icon span {
-            background: #ffffff; /* 激活时反白 */
+            background: #ffffff; 
         }
 
-        /* 横向铺满下拉菜单栏基础样式 */
+        /* 下拉菜单（保持黑底白字） */
         #dropdown-menu {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             transform: translateY(-100%); 
-            background: #000000; /* 🛠 菜单底色反转为纯黑 */
+            background: #000000; 
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
             box-sizing: border-box;
             z-index: 10001;
@@ -95,17 +93,15 @@
             transform: translateY(0);
         }
 
-        /* 菜单内部按钮载体 */
         .menu-links {
             display: flex;
             flex-direction: column;
             gap: 20px; 
         }
         .menu-item {
-            font-family: "Cinzel", "Didot", "Helvetica Neue", Arial, -apple-system, sans-serif;
-            font-size: 18px; /* 🛠 保持缩小后的 18px */
+            font-size: 18px; 
             font-weight: 600; 
-            letter-spacing: 6px; /* 🛠 保持 6px 字间距 */
+            letter-spacing: 6px; 
             color: #aaaaaa; 
             cursor: pointer;
             transition: color 0.3s, transform 0.3s;
@@ -119,7 +115,7 @@
         }
 
         /* ==========================================================
-           📱 仅移动端生效的独立尺寸 (Logo 20px)
+           📱 独立响应式尺寸
            ========================================================== */
         @media (max-width: 768px) {
             body { padding-top: 55px; }
@@ -131,22 +127,14 @@
             .menu-trigger-icon span:last-child { margin-bottom: 0; }
             #dropdown-menu { padding: 65px 40px 35px; }
 
-            .container { margin: 30px auto; padding: 0 20px; }
-            .collection-title { font-size: 32px; margin-bottom: 40px; }
-            .product-grid { grid-template-columns: 1fr; gap: 45px; }
-            .product-card { max-width: 100%; }
-            .product-image-wrapper { margin-bottom: 15px; }
-            .product-name { font-size: 24px; margin: 15px 0 6px 0; }
-            .product-price { font-size: 14px; margin-bottom: 15px; }
-            .buy-btn { padding: 12px 40px; font-size: 12px; width: auto; display: inline-block; }
-            .modal-content { padding: 30px 20px; }
+            .container { margin: 40px auto; padding: 0 15px; }
+            .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; } /* 移动端双列紧凑 */
+            .product-name { font-size: 10px; }
+            .product-price { font-size: 10px; }
         }
 
-        /* ==========================================================
-           💻 仅 PC 端生效的独立尺寸 (Logo 35px)
-           ========================================================== */
         @media (min-width: 769px) {
-            body { padding-top: 80px; }
+            body { padding-top: 90px; }
             #header { height: 55px; }
             .logo-btn { height: 35px; } 
             .menu-trigger { height: 55px; }
@@ -156,120 +144,99 @@
             #dropdown-menu { padding: 85px 40px 35px; }
         }
 
-        /* 3. 商品货架布局 */
+        /* 3. ✟ ERD 风格商品陈列场 ✟ */
         .container {
-            max-width: 1200px;
+            max-width: 1350px;
             margin: 60px auto;
-            padding: 0 20px;
+            padding: 0 40px;
         }
 
-        .collection-title {
-            text-align: center;
-            font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 46px;
-            margin-bottom: 70px;
-            font-weight: 400;
-            color: #000000; /* 🛠 反黑 */
-        }
-
-        /* 商品网格居中 */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 50px;
-            justify-content: center;
-            justify-items: center;
+            grid-template-columns: repeat(4, 1fr); /* 干净利落的 4 列布局 */
+            gap: 60px 40px; /* 极大的空旷留白感 */
         }
 
-        .product-card {
-            text-align: center;
+        /* 商品单项转化为纯粹图文超链接 */
+        .product-item-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.8s forwards ease;
+            transform: translateY(15px);
+            animation: erdUnveil 0.8s forwards cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        @keyframes erdUnveil {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .product-image-box {
             width: 100%;
-            max-width: 320px; /* 电脑端紧凑精致尺寸 */
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .product-image-wrapper {
-            background-color: #f9f9f9; /* 🛠 改为明亮浅色载体背景 */
-            overflow: hidden;
-            margin-bottom: 20px;
             aspect-ratio: 3 / 4;
+            background-color: #ffffff;
+            overflow: hidden;
+            margin-bottom: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #eeeeee; /* 🛠 淡灰色边框 */
-            transition: border-color 0.4s ease;
-        }
-        .product-card:hover .product-image-wrapper {
-            border: 1px solid #000000; /* 🛠 悬停时变为锐利纯黑边框 */
         }
 
-        .product-card img {
+        .product-image-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s ease;
+            filter: grayscale(10%); /* 略带冷调微灰 */
+            transition: transform 0.6s ease, filter 0.6s ease;
         }
-        .product-card:hover img {
-            transform: scale(1.02);
+
+        /* 悬停时极其轻微的反馈 */
+        .product-item-link:hover img {
+            transform: scale(1.01);
+            filter: grayscale(0%);
+        }
+
+        /* 彻底删减多余修饰，全大写，极低调 */
+        .product-info-meta {
+            text-align: left;
+            padding-left: 2px;
         }
 
         .product-name {
-            font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 26px; 
-            margin: 15px 0 8px 0;
-            color: #000000; /* 🛠 反黑 */
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            margin: 0 0 4px 0;
+            color: #000000;
+            line-height: 1.4;
         }
 
         .product-price {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 15px;
-            color: #666666; /* 🛠 提高可读性的灰色 */
-            margin-bottom: 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 400;
+            color: #777777; /* 极淡的价格存在感 */
+            margin: 0;
         }
 
-        .buy-btn {
-            display: inline-block;
-            background-color: #000000; /* 🛠 按钮反色：黑底白字 */
-            color: #ffffff;
-            padding: 12px 40px;
-            font-size: 12px;
-            font-weight: bold;
-            text-decoration: none;
-            border: 1px solid #000000;
-            transition: all 0.3s ease;
-            letter-spacing: 2px;
-        }
-        .buy-btn:hover {
-            background-color: #ffffff; /* 🛠 悬停反色：白底黑字 */
-            color: #000000;
-        }
-
-        /* 4. 二维码弹窗系统（保持经典黑白仪式感） */
+        /* 4. 二维码遮罩系统 */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.85); /* 🛠 遮罩层换为透白虚化 */
-            backdrop-filter: blur(8px); 
+            background-color: rgba(255, 255, 255, 0.92); /* 极淡的透白虚化 */
+            backdrop-filter: blur(4px); 
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 100003;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
 
         .modal-overlay.active {
@@ -278,15 +245,15 @@
         }
 
         .modal-content {
-            background-color: #ffffff; /* 🛠 弹窗卡片背景换为白色 */
-            border: 1px solid #000000; /* 🛠 契合要求的纯黑色边框 */
-            padding: 35px; /* 🛠 保持放大的大内边距空间 */
+            background-color: #ffffff; 
+            border: 1px solid #000000; /* 要求的纯黑色硬朗边框 */
+            padding: 35px; 
             text-align: center;
             max-width: 320px;
             width: 90%;
             position: relative;
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
+            transform: scale(0.96);
+            transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -298,27 +265,24 @@
 
         .modal-title {
             font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 28px;
+            font-size: 26px;
             margin-bottom: 25px;
-            color: #000000; /* 🛠 反黑 */
+            color: #000000;
         }
 
         .qrcode-img {
-            width: min(40vw, 160px); /* 🛠 维持原有大小不变 */
-            height: auto;
-            box-sizing: border-box;
+            width: 160px; /* 维持大小不变 */
+            height: 160px;
             object-fit: contain;
             margin: 0 auto 20px auto;
             display: block;
             filter: grayscale(100%);
             transition: filter 0.3s;
         }
-        .qrcode-img:hover {
-            filter: grayscale(0%);
-        }
+        .qrcode-img:hover { filter: grayscale(0%); }
 
         .modal-desc {
-            font-size: 12px;
+            font-size: 11px;
             color: #666666;
             letter-spacing: 1px;
             line-height: 1.6;
@@ -328,21 +292,18 @@
             position: absolute;
             top: 15px;
             right: 20px;
-            font-size: 24px;
+            font-size: 22px;
             color: #999999;
             cursor: pointer;
             transition: color 0.3s;
         }
-        .close-btn:hover {
-            color: #000000;
-        }
+        .close-btn:hover { color: #000000; }
     </style>
 </head>
 <body>
 
-    <!-- ✟ ERD 风格顶部导航栏（完美移植首页） ✟ -->
+    <!-- ✟ 顶部导航栏（完美反转纯黑） ✟ -->
     <div id="header">
-        <!-- 这里的 logo.png 如果本身是白色的，可以通过 CSS 滤镜控制，或直接替换为黑色版 LOGO 图 -->
         <img src="logo.png" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
         
         <div class="menu-trigger" id="menuTrigger">
@@ -361,52 +322,51 @@
         </div>
     </div>
 
+    <!-- ERD 货架主场 -->
     <div class="container">
-        <h2 class="collection-title">在售</h2>
-        
-        <!-- 商品网格 -->
         <div class="product-grid" id="gridBox"></div>
     </div>
 
-    <!-- 二维码弹窗 -->
+    <!-- 公众号弹窗 -->
     <div class="modal-overlay" id="qrcodeModal">
         <div class="modal-content">
             <span class="close-btn" id="closeTrigger">&times;</span>
             <div class="modal-title">Contact</div>
-            <img src="qrcode.png" alt="联系微信二维码" class="qrcode-img">
+            <img src="qrcode.png" alt="微信二维码" class="qrcode-img">
             <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
         </div>
     </div>
 
     <script>
-        // A. 动态读取 products.json 渲染货架
+        // A. 动态读取并渲染 ERD 极简流线货架
         fetch('products.json')
             .then(response => response.json())
             .then(products => {
                 const gridBox = document.getElementById('gridBox');
                 
                 products.forEach((product, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
-                    card.style.animationDelay = `${index * 0.15}s`; 
+                    const itemLink = document.createElement('a');
+                    itemLink.href = product.link;
+                    itemLink.className = 'product-item-link';
+                    itemLink.target = '_blank';
+                    itemLink.style.animationDelay = `${index * 0.08}s`; 
                     
-                    card.innerHTML = `
-                        <div class="product-image-wrapper">
+                    itemLink.innerHTML = `
+                        <div class="product-image-box">
                             <img src="${product.image}" alt="${product.name}">
                         </div>
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-price">${product.price}</div>
-                        <a href="${product.link}" class="buy-btn" target="_blank">了解 / 购买</a>
+                        <div class="product-info-meta">
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-price">${product.price}</p>
+                        </div>
                     `;
                     
-                    gridBox.appendChild(card);
+                    gridBox.appendChild(itemLink);
                 });
             })
             .catch(error => console.error('读取商品数据失败:', error));
 
-        // B. ==========================================
-        // 🛠 *首页同款：高级交互控制引擎*
-        // ==========================================
+        // B. 高级交互控制引擎
         const trigger = document.getElementById('menuTrigger');
         const menu = document.getElementById('dropdown-menu');
         const logo = document.getElementById('logoBtn');
@@ -441,9 +401,7 @@
 
         logo.addEventListener('mouseenter', () => {
             isHoveringLogo = true;
-            if (menu.classList.contains('show')) {
-                openMenu();
-            }
+            if (menu.classList.contains('show')) openMenu();
         });
         logo.addEventListener('mouseleave', () => {
             isHoveringLogo = false;
@@ -469,13 +427,8 @@
             }
         });
 
-        menu.addEventListener('mouseenter', () => {
-            isHoveringMenu = true;
-        });
-        menu.addEventListener('mouseleave', () => {
-            isHoveringMenu = false;
-            checkMenuStatus();
-        });
+        menu.addEventListener('mouseenter', () => { isHoveringMenu = true; });
+        menu.addEventListener('mouseleave', () => { isHoveringMenu = false; checkMenuStatus(); });
 
         document.addEventListener('click', (e) => {
             if (isClickOpen && !menu.contains(e.target) && !trigger.contains(e.target)) {
@@ -484,22 +437,12 @@
         });
 
         window.addEventListener('scroll', () => {
-            if (menu.classList.contains('show')) {
-                closeMenu();
-            }
+            if (menu.classList.contains('show')) closeMenu();
         }, { passive: true });
 
-        // C. 控制二维码弹窗的逻辑代码
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-            }
-        });
+        // C. 弹窗控制
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
     </script>
-
 </body>
 </html>
