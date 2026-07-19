@@ -7,51 +7,156 @@
     <!-- 引入纽时报头风格的复古哥特体，以及经典报业衬线体 -->
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        /* 1. 纯黑底色与经典印刷质感 */
-        body {
+        /* 1. 全白底色与经典印刷质感 */
+        html, body {
             margin: 0;
             padding: 0;
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #ffffff; /* 🛠 整体底色换为纯白 */
+            color: #000000; /* 🛠 文字反向为黑色 */
             font-family: 'Playfair Display', 'Georgia', "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif; 
             letter-spacing: 1px;
             -webkit-font-smoothing: antialiased;
+            overflow-y: auto;
+            scroll-behavior: smooth;
         }
+        img { user-select: none; -webkit-user-drag: none; }
 
-        /* 2. 顶部导航栏（电脑端样式） */
-        header {
-            padding: 40px 50px;
+        /* 2. ✟ 完美同步首页：风格透明固定顶部栏基础布局 ✟ */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: transparent;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
-            border-bottom: 1px solid #1c1c1c; 
+            z-index: 10000;
+            box-sizing: border-box;
+            padding: 0 40px;
         }
 
-        /* 品牌 LOGO：去掉 font-weight: bold，恢复字体本来的纤细与古典韵味 */
-        .brand-logo {
-            font-family: 'UnifrakturMaguntia', cursive; 
-            font-size: 48px; 
-            text-decoration: none;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-            text-transform: lowercase; 
-            font-weight: 400; 
+        /* 靠左 Logo 基础样式（反向为黑色滤镜） */
+        .logo-btn {
+            width: auto;
+            cursor: pointer;
+            position: relative;
+            z-index: 10003;
+            filter: invert(0); /* 默认保持原标或黑色 */
+            transition: transform 0.3s, filter 0.3s; 
+        }
+        .logo-btn:hover {
+            transform: scale(1.03);
+        }
+        /* 激活时反转颜色 */
+        .logo-btn.active {
+            filter: invert(1);
         }
 
-        .nav-links a {
-            margin-left: 35px;
-            text-decoration: none;
-            color: #aaaaaa;
-            font-size: 14px;
-            letter-spacing: 2px;
-            transition: color 0.3s ease;
+        /* 右侧汉堡菜单悬停区基础样式 */
+        .menu-trigger {
+            position: absolute;
+            right: 40px;
+            top: 0;
+            display: flex;
+            align-items: center;
+            z-index: 10002;
             cursor: pointer;
         }
-        .nav-links a:hover { 
-            color: #ffffff;
+        .menu-trigger-icon {
+            display: flex;
+            flex-direction: column;
+        }
+        .menu-trigger-icon span {
+            display: block;
+            width: 100%;
+            background: #000000; /* 🛠 按钮线反向为黑色 */
+            transition: background 0.3s;
+        }
+        .menu-trigger.active .menu-trigger-icon span {
+            background: #ffffff; /* 激活时反白 */
         }
 
-        /* 3. 商品货架布局（电脑端样式） */
+        /* 横向铺满下拉菜单栏基础样式 */
+        #dropdown-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(-100%); 
+            background: #000000; /* 🛠 菜单底色反转为纯黑 */
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+            box-sizing: border-box;
+            z-index: 10001;
+            display: flex;
+            justify-content: flex-end; 
+        }
+        #dropdown-menu.show {
+            transform: translateY(0);
+        }
+
+        /* 菜单内部按钮载体 */
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; 
+        }
+        .menu-item {
+            font-family: "Cinzel", "Didot", "Helvetica Neue", Arial, -apple-system, sans-serif;
+            font-size: 18px; /* 🛠 保持缩小后的 18px */
+            font-weight: 600; 
+            letter-spacing: 6px; /* 🛠 保持 6px 字间距 */
+            color: #aaaaaa; 
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+            text-transform: uppercase;
+            white-space: nowrap;
+            transform-origin: right center; 
+        }
+        .menu-item:hover {
+            color: #ffffff; 
+            transform: scale(1.03); 
+        }
+
+        /* ==========================================================
+           📱 仅移动端生效的独立尺寸 (Logo 20px)
+           ========================================================== */
+        @media (max-width: 768px) {
+            body { padding-top: 55px; }
+            #header { height: 40px; }
+            .logo-btn { height: 20px; } 
+            .menu-trigger { height: 40px; }
+            .menu-trigger-icon { width: 16px; }
+            .menu-trigger-icon span { height: 1px; margin-bottom: 4px; }
+            .menu-trigger-icon span:last-child { margin-bottom: 0; }
+            #dropdown-menu { padding: 65px 40px 35px; }
+
+            .container { margin: 30px auto; padding: 0 20px; }
+            .collection-title { font-size: 32px; margin-bottom: 40px; }
+            .product-grid { grid-template-columns: 1fr; gap: 45px; }
+            .product-card { max-width: 100%; }
+            .product-image-wrapper { margin-bottom: 15px; }
+            .product-name { font-size: 24px; margin: 15px 0 6px 0; }
+            .product-price { font-size: 14px; margin-bottom: 15px; }
+            .buy-btn { padding: 12px 40px; font-size: 12px; width: auto; display: inline-block; }
+            .modal-content { padding: 30px 20px; }
+        }
+
+        /* ==========================================================
+           💻 仅 PC 端生效的独立尺寸 (Logo 35px)
+           ========================================================== */
+        @media (min-width: 769px) {
+            body { padding-top: 80px; }
+            #header { height: 55px; }
+            .logo-btn { height: 35px; } 
+            .menu-trigger { height: 55px; }
+            .menu-trigger-icon { width: 22px; } 
+            .menu-trigger-icon span { height: 2px; margin-bottom: 4px; } 
+            .menu-trigger-icon span:last-child { margin-bottom: 0; }
+            #dropdown-menu { padding: 85px 40px 35px; }
+        }
+
+        /* 3. 商品货架布局 */
         .container {
             max-width: 1200px;
             margin: 60px auto;
@@ -64,7 +169,7 @@
             font-size: 46px;
             margin-bottom: 70px;
             font-weight: 400;
-            color: #ffffff;
+            color: #000000; /* 🛠 反黑 */
         }
 
         /* 商品网格居中 */
@@ -73,17 +178,16 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 50px;
             justify-content: center;
-            justify-items: center; /* 让卡片在格子内居中 */
+            justify-items: center;
         }
 
-        /* ✅ 核心修改：限制电脑端商品的最高宽度，防止在大屏幕上单张图被拉得太大 */
         .product-card {
             text-align: center;
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.8s forwards ease;
             width: 100%;
-            max-width: 320px; /* 电脑端严格限制在此宽度内，显得紧凑精致 */
+            max-width: 320px; /* 电脑端紧凑精致尺寸 */
         }
 
         @keyframes fadeIn {
@@ -94,18 +198,18 @@
         }
 
         .product-image-wrapper {
-            background-color: #080808;
+            background-color: #f9f9f9; /* 🛠 改为明亮浅色载体背景 */
             overflow: hidden;
             margin-bottom: 20px;
             aspect-ratio: 3 / 4;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #161616;
+            border: 1px solid #eeeeee; /* 🛠 淡灰色边框 */
             transition: border-color 0.4s ease;
         }
         .product-card:hover .product-image-wrapper {
-            border-color: #333333;
+            border: 1px solid #000000; /* 🛠 悬停时变为锐利纯黑边框 */
         }
 
         .product-card img {
@@ -122,47 +226,47 @@
             font-family: 'UnifrakturMaguntia', cursive;
             font-size: 26px; 
             margin: 15px 0 8px 0;
-            color: #ffffff;
+            color: #000000; /* 🛠 反黑 */
         }
 
         .product-price {
             font-family: 'Playfair Display', serif;
             font-style: italic;
             font-size: 15px;
-            color: #888888;
+            color: #666666; /* 🛠 提高可读性的灰色 */
             margin-bottom: 20px;
         }
 
         .buy-btn {
             display: inline-block;
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #000000; /* 🛠 按钮反色：黑底白字 */
+            color: #ffffff;
             padding: 12px 40px;
             font-size: 12px;
             font-weight: bold;
             text-decoration: none;
-            border: 1px solid #ffffff;
+            border: 1px solid #000000;
             transition: all 0.3s ease;
             letter-spacing: 2px;
         }
         .buy-btn:hover {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #ffffff; /* 🛠 悬停反色：白底黑字 */
+            color: #000000;
         }
 
-        /* 4. 二维码弹窗系统 */
+        /* 4. 二维码弹窗系统（保持经典黑白仪式感） */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); 
+            background-color: rgba(255, 255, 255, 0.85); /* 🛠 遮罩层换为透白虚化 */
             backdrop-filter: blur(8px); 
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 100003;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -174,15 +278,19 @@
         }
 
         .modal-content {
-            background-color: #0a0a0a;
-            border: 1px solid #222222;
-            padding: 40px;
+            background-color: #ffffff; /* 🛠 弹窗卡片背景换为白色 */
+            border: 1px solid #000000; /* 🛠 契合要求的纯黑色边框 */
+            padding: 35px; /* 🛠 保持放大的大内边距空间 */
             text-align: center;
             max-width: 320px;
             width: 90%;
             position: relative;
             transform: scale(0.9);
             transition: transform 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .modal-overlay.active .modal-content {
             transform: scale(1);
@@ -192,18 +300,21 @@
             font-family: 'UnifrakturMaguntia', cursive;
             font-size: 28px;
             margin-bottom: 25px;
-            color: #ffffff;
+            color: #000000; /* 🛠 反黑 */
         }
 
         .qrcode-img {
-            width: 200px;
-            height: 200px;
-            background-color: #ffffff; 
-            padding: 10px;
+            width: min(40vw, 160px); /* 🛠 维持原有大小不变 */
+            height: auto;
             box-sizing: border-box;
             object-fit: contain;
             margin: 0 auto 20px auto;
             display: block;
+            filter: grayscale(100%);
+            transition: filter 0.3s;
+        }
+        .qrcode-img:hover {
+            filter: grayscale(0%);
         }
 
         .modal-desc {
@@ -218,94 +329,37 @@
             top: 15px;
             right: 20px;
             font-size: 24px;
-            color: #555555;
+            color: #999999;
             cursor: pointer;
             transition: color 0.3s;
         }
         .close-btn:hover {
-            color: #ffffff;
-        }
-
-        /* ==========================================
-           🚨 手机端高定制修改（手机图依然维持原状）
-           ========================================== */
-        @media screen and (max-width: 768px) {
-            header {
-                padding: 30px 20px;
-                flex-direction: column; 
-                gap: 15px;
-            }
-
-            .brand-logo {
-                font-size: 28px; 
-                letter-spacing: 0.5px;
-                text-align: center;
-                font-weight: 400; 
-            }
-
-            .nav-links a {
-                margin: 0 15px; 
-                font-size: 13px;
-            }
-
-            .container {
-                margin: 30px auto;
-                padding: 0 20px;
-            }
-
-            .collection-title {
-                font-size: 32px;
-                margin-bottom: 40px;
-            }
-
-            /* 手机端保持单列 */
-            .product-grid {
-                grid-template-columns: 1fr; 
-                gap: 45px; 
-            }
-
-            /* ✅ 核心修正：手机端解除电脑端的 max-width 限制，使其能完全铺满，保持大气的大图样式 */
-            .product-card {
-                max-width: 100%; 
-            }
-
-            .product-image-wrapper {
-                margin-bottom: 15px;
-            }
-
-            .product-name {
-                font-size: 24px; 
-                margin: 15px 0 6px 0;
-            }
-
-            .product-price {
-                font-size: 14px;
-                margin-bottom: 15px;
-            }
-
-            .buy-btn {
-                padding: 12px 40px;
-                font-size: 12px;
-                width: auto; 
-                display: inline-block;
-            }
-
-            .modal-content {
-                padding: 30px 20px;
-            }
+            color: #000000;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="#" class="brand-logo">andseethingsasido</a>
-        <div class="nav-links">
-            <a href="#">商店</a>
-            <a href="#">故事</a>
-            <a id="connectTrigger">联系</a>
+    <!-- ✟ ERD 风格顶部导航栏（完美移植首页） ✟ -->
+    <div id="header">
+        <!-- 这里的 logo.png 如果本身是白色的，可以通过 CSS 滤镜控制，或直接替换为黑色版 LOGO 图 -->
+        <img src="logo.png" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
+        
+        <div class="menu-trigger" id="menuTrigger">
+            <div class="menu-trigger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-    </header>
+        
+        <div id="dropdown-menu">
+            <div class="menu-links">
+                <div class="menu-item" onclick="closeMenu();location.href='https://andseethingsasido.github.io/and666/'">商店</div>
+                <div class="menu-item" onclick="closeMenu();document.getElementById('qrcodeModal').classList.add('active')">公众号</div>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <h2 class="collection-title">在售</h2>
@@ -350,15 +404,92 @@
             })
             .catch(error => console.error('读取商品数据失败:', error));
 
-        // B. 控制二维码弹窗的逻辑代码
+        // B. ==========================================
+        // 🛠 *首页同款：高级交互控制引擎*
+        // ==========================================
+        const trigger = document.getElementById('menuTrigger');
+        const menu = document.getElementById('dropdown-menu');
+        const logo = document.getElementById('logoBtn');
         const modal = document.getElementById('qrcodeModal');
-        const openBtn = document.getElementById('connectTrigger');
         const closeBtn = document.getElementById('closeTrigger');
 
-        openBtn.addEventListener('click', () => {
-            modal.classList.add('active');
+        let isHoveringTrigger = false;
+        let isHoveringMenu = false;
+        let isHoveringLogo = false;
+        let isClickOpen = false;
+
+        function openMenu() {
+            menu.classList.add('show');
+            trigger.classList.add('active');
+            logo.classList.add('active');
+        }
+
+        function closeMenu() {
+            menu.classList.remove('show');
+            trigger.classList.remove('active');
+            logo.classList.remove('active');
+            isClickOpen = false;
+        }
+
+        function checkMenuStatus() {
+            setTimeout(() => {
+                if (!isHoveringTrigger && !isHoveringMenu && !isHoveringLogo && !isClickOpen) {
+                    closeMenu();
+                }
+            }, 50);
+        }
+
+        logo.addEventListener('mouseenter', () => {
+            isHoveringLogo = true;
+            if (menu.classList.contains('show')) {
+                openMenu();
+            }
+        });
+        logo.addEventListener('mouseleave', () => {
+            isHoveringLogo = false;
+            checkMenuStatus();
         });
 
+        trigger.addEventListener('mouseenter', () => {
+            isHoveringTrigger = true;
+            openMenu();
+        });
+        trigger.addEventListener('mouseleave', () => {
+            isHoveringTrigger = false;
+            checkMenuStatus();
+        });
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (menu.classList.contains('show') && isClickOpen) {
+                closeMenu();
+            } else {
+                isClickOpen = true;
+                openMenu();
+            }
+        });
+
+        menu.addEventListener('mouseenter', () => {
+            isHoveringMenu = true;
+        });
+        menu.addEventListener('mouseleave', () => {
+            isHoveringMenu = false;
+            checkMenuStatus();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (isClickOpen && !menu.contains(e.target) && !trigger.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            if (menu.classList.contains('show')) {
+                closeMenu();
+            }
+        }, { passive: true });
+
+        // C. 控制二维码弹窗的逻辑代码
         closeBtn.addEventListener('click', () => {
             modal.classList.remove('active');
         });
