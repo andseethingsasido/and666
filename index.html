@@ -114,16 +114,18 @@ title: SHOP | andseethingsasido
             white-space: nowrap;
             transform-origin: right center; 
             
-            width: 105px; 
-            text-align: justify;
-            text-align-last: justify; 
+            /* 🛠 修复排版：取消强制两端对齐与宽度限制 */
+            width: auto; 
+            text-align: right;
         }
         .menu-item:hover {
             color: #ffffff; 
             transform: scale(1.03); 
         }
 
-        /* 📱 独立响应式尺寸 */
+        /* ==========================================================
+           📱 独立响应式尺寸
+           ========================================================== */
         @media (max-width: 768px) {
             body { padding-top: 55px; }
             #header { height: 40px; }
@@ -308,7 +310,6 @@ title: SHOP | andseethingsasido
 
     <!-- ✟ 顶部导航栏 ✟ -->
     <div id="header">
-        <!-- 🌟 使用 relative_url 指向 images/logo.png -->
         <img src="{{ '/images/logo.png' | relative_url }}" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
         
         <div class="menu-trigger" id="menuTrigger">
@@ -337,14 +338,13 @@ title: SHOP | andseethingsasido
         <div class="modal-content">
             <span class="close-btn" id="closeTrigger">&times;</span>
             <div class="modal-title">Contact</div>
-            <!-- 🌟 使用 relative_url 指向 images/gozhonghao.jpg -->
             <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
             <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
         </div>
     </div>
 
     <script>
-        // A. 动态读取 JSON，补全相对路径
+        // A. 动态读取并渲染 ERD 极简流线货架
         fetch("{{ '/products.json' | relative_url }}")
             .then(response => response.json())
             .then(products => {
