@@ -29,10 +29,9 @@
     </nav>
 </header>
 
-<!-- 独立弹窗组件：公众号遮罩层 -->
+<!-- 独立弹窗组件：公众号遮罩层（已删除关闭按钮） -->
 <div class="modal-overlay" id="qrcodeModal">
     <div class="modal-content">
-        <span class="close-btn" id="closeTrigger">&times;</span>
         <div class="modal-title">Contact</div>
         <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="gozhonghao" class="qrcode-img" id="modalQrcodeImg">
     </div>
@@ -73,10 +72,10 @@
         z-index: 10003;
         transition: transform 0.3s, filter 0.3s; 
         pointer-events: auto;
-        filter: invert(1); /* 白底页面：反转为黑 Logo */
+        filter: invert(1);
     }
     .logo-btn:hover { transform: scale(1.02); }
-    .logo-btn.active { filter: none !important; } /* 菜单展开黑底时：变回原图白色 */
+    .logo-btn.active { filter: none !important; }
 
     .menu-trigger {
         position: absolute;
@@ -99,12 +98,12 @@
     .menu-trigger-icon span { 
         display: block; 
         width: 100%; 
-        background: #000000; /* 白底页面默认为黑线 */
+        background: #000000; 
         transition: background 0.3s, transform 0.3s; 
     }
     
     .menu-trigger.active .menu-trigger-icon span { 
-        background: #ffffff; /* 菜单展开（黑底）时切为白线 */
+        background: #ffffff; 
     }
 
     /* 下拉菜单：背景设为黑色 */
@@ -114,7 +113,7 @@
         left: 0;
         width: 100%;
         transform: translateY(-100%); 
-        background: #000000; /* 展开菜单为纯黑背景 */
+        background: #000000; 
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         box-sizing: border-box;
@@ -139,7 +138,7 @@
         font-size: 20px; 
         font-weight: 700; 
         letter-spacing: 0.15em; 
-        color: #ffffff; /* 纯白文字 */
+        color: #ffffff; 
         cursor: pointer;
         transition: opacity 0.25s ease;
         white-space: nowrap;
@@ -154,7 +153,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.85); /* 遮罩暗化 */
+        background-color: rgba(0, 0, 0, 0.85); 
         backdrop-filter: blur(4px); 
         display: flex;
         justify-content: center;
@@ -207,18 +206,6 @@
         filter: none !important; 
     }
 
-    .close-btn {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        font-size: 22px;
-        color: #999999;
-        cursor: pointer;
-        transition: color 0.3s ease;
-        user-select: none;
-    }
-    .close-btn:hover { color: #000000; }
-
     @media (max-width: 768px) {
         #header { height: 40px; padding: 0 20px; }
         .logo-btn { height: 20px; } 
@@ -243,7 +230,6 @@
     const menu = document.getElementById('dropdown-menu');
     const logo = document.getElementById('headerLogoBtn');
     const modal = document.getElementById('qrcodeModal');
-    const closeBtn = document.getElementById('closeTrigger');
 
     let isHoveringTrigger = false;
     let isHoveringMenu = false;
@@ -312,7 +298,6 @@
         }
     }
 
-    if (closeBtn) closeBtn.addEventListener('click', handleModalClose);
     if (modal) {
         modal.addEventListener('click', (e) => { if (e.target === modal) handleModalClose(); });
     }
