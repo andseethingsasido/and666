@@ -42,7 +42,7 @@
         pointer-events: none; /* 图片区域同样保持穿透 */
     }
 
-    /* 4. 保留兼容：如果以后在底部栏加入了链接 (a) 或按钮 (button)，会自动恢复点击点击 */
+    /* 4. 保留兼容：如果以后在底部栏加入了链接 (a) 或按钮 (button)，会自动恢复点击 */
     #footer a,
     #footer button {
         pointer-events: auto !important;
@@ -56,5 +56,12 @@
         margin: 0 auto;
         user-select: none;
         -webkit-user-drag: none;
+        filter: invert(1) !important; /* 🌟 反色处理 */
+        transition: filter 0.3s ease; /* 平滑过渡效果 */
+    }
+
+    /* 如果后续需要配合 JS 切换反色状态，也可使用 active 类 */
+    .footer-photo.active {
+        filter: invert(1) !important;
     }
 </style>
