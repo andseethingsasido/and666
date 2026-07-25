@@ -3,58 +3,28 @@ layout: default
 title: SHOP | andseethingsasido
 ---
 
-<!-- 引入主仓库一致的哥特质感字体 -->
+<!-- 引入哥特字体仅供弹窗 Contact 标题使用 -->
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+<!-- ✟ ERD 极简商品陈列场 ✟ -->
+<div class="container">
+    <div class="product-grid" id="gridBox"></div>
+</div>
+
+<!-- 公众号 / 联系弹窗 -->
+<div class="modal-overlay" id="qrcodeModal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeTrigger">&times;</span>
+        <div class="modal-title">Contact</div>
+        <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
+        <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
+    </div>
+</div>
 
 <style>
     /* ==========================================================
-       1. 顶部 header 与底部 footer 反差色样式 (纯黑底白字)
-       ========================================================== */
-    #header, header, .site-header {
-        background-color: #000000 !important;
-        color: #ffffff !important;
-        border-bottom: 1px solid #1a1a1a;
-    }
-
-    #header a, header a, .site-header a,
-    #header .menu-item, header .menu-item {
-        color: #ffffff !important;
-    }
-
-    /* 使 Logo 自动反转为白色 */
-    #header .logo-btn, header img.logo, .logo img {
-        filter: invert(1) !important;
-    }
-
-    /* 汉堡菜单图标调成白色 */
-    #header .menu-trigger-icon span, .menu-trigger span {
-        background-color: #ffffff !important;
-    }
-
-    /* 底部导航栏反差色 */
-    footer, #footer, .site-footer {
-        background-color: #000000 !important;
-        color: #ffffff !important;
-        border-top: 1px solid #1a1a1a;
-        padding: 40px;
-        text-align: center;
-        font-size: 10px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-    }
-
-    footer a, #footer a, .site-footer a {
-        color: #aaaaaa !important;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-
-    footer a:hover, #footer a:hover, .site-footer a:hover {
-        color: #ffffff !important;
-    }
-
-    /* ==========================================================
-       2. ERD 极简商品货架展示区
+       仅保留当前页面专属：商品货架与公众号弹窗样式
+       （导航栏 Header 与 Footer 已由 _layouts/default 统一管控）
        ========================================================== */
     .container {
         max-width: 1350px;
@@ -84,7 +54,7 @@ title: SHOP | andseethingsasido
     .product-image-box {
         width: 100%;
         aspect-ratio: 3 / 4;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         overflow: hidden;
         margin-bottom: 12px;
         display: flex;
@@ -114,7 +84,7 @@ title: SHOP | andseethingsasido
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 2px;
-        font-weight: 400;
+        font-weight: 500;
         margin: 0 0 4px 0;
         color: #000000;
         line-height: 1.4;
@@ -124,13 +94,13 @@ title: SHOP | andseethingsasido
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 1.5px;
-        font-weight: 300;
+        font-weight: 400;
         color: #777777;
         margin: 0;
     }
 
     /* ==========================================================
-       3. 哥特暗黑风二维码/联系弹窗
+       微信二维码弹窗系统
        ========================================================== */
     .modal-overlay {
         position: fixed;
@@ -138,8 +108,8 @@ title: SHOP | andseethingsasido
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.88);
-        backdrop-filter: blur(5px); 
+        background-color: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(4px); 
         display: flex;
         justify-content: center;
         align-items: center;
@@ -155,12 +125,11 @@ title: SHOP | andseethingsasido
     }
 
     .modal-content {
-        background-color: #000000; 
-        border: 1px solid #222222;
-        color: #ffffff;
-        padding: 35px 30px; 
+        background-color: #ffffff; 
+        border: 1px solid #000000;
+        padding: 35px; 
         text-align: center;
-        max-width: 300px;
+        max-width: 320px;
         width: 90%;
         position: relative;
         transform: scale(0.96);
@@ -175,19 +144,16 @@ title: SHOP | andseethingsasido
         transform: scale(1);
     }
 
-    /* ✟ 统一为主仓库哥特字体 ✟ */
     .modal-title {
         font-family: 'UnifrakturMaguntia', cursive;
         font-size: 26px;
-        font-weight: normal;
-        letter-spacing: 1px;
-        margin-bottom: 20px;
-        color: #ffffff;
+        margin-bottom: 25px;
+        color: #000000;
     }
 
     .qrcode-img {
-        width: 150px; 
-        height: 150px;
+        width: 160px; 
+        height: 160px;
         object-fit: contain;
         margin: 0 auto 20px auto;
         display: block;
@@ -198,24 +164,23 @@ title: SHOP | andseethingsasido
     .qrcode-img:hover { filter: grayscale(0%); }
 
     .modal-desc {
-        font-size: 10px;
-        color: #888888;
-        letter-spacing: 1.5px;
+        font-size: 11px;
+        color: #666666;
+        letter-spacing: 1px;
         line-height: 1.6;
     }
 
     .close-btn {
         position: absolute;
-        top: 12px;
-        right: 16px;
-        font-size: 20px;
-        color: #666666;
+        top: 15px;
+        right: 20px;
+        font-size: 22px;
+        color: #999999;
         cursor: pointer;
         transition: color 0.3s;
-        line-height: 1;
     }
 
-    .close-btn:hover { color: #ffffff; }
+    .close-btn:hover { color: #000000; }
 
     @media (max-width: 768px) {
         .container { margin: 40px auto; padding: 0 15px; }
@@ -225,23 +190,8 @@ title: SHOP | andseethingsasido
     }
 </style>
 
-<!-- ✟ ERD 极简商品陈列场 ✟ -->
-<div class="container">
-    <div class="product-grid" id="gridBox"></div>
-</div>
-
-<!-- 公众号 / 联系弹窗 -->
-<div class="modal-overlay" id="qrcodeModal">
-    <div class="modal-content">
-        <span class="close-btn" id="closeTrigger">&times;</span>
-        <div class="modal-title">Contact</div>
-        <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
-        <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
-    </div>
-</div>
-
 <script>
-    // 动态读取 products.json 渲染商品
+    // 1. 动态读取 products.json 渲染商品货架
     fetch("{{ '/products.json' | relative_url }}")
         .then(response => response.json())
         .then(products => {
@@ -269,9 +219,10 @@ title: SHOP | andseethingsasido
         })
         .catch(error => console.error('读取商品数据失败:', error));
 
-    // 弹窗交互控制
+    // 2. 公众号弹窗交互控制
     const modal = document.getElementById('qrcodeModal');
     const closeBtn = document.getElementById('closeTrigger');
+
     if (closeBtn) {
         closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     }
