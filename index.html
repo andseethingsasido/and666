@@ -3,11 +3,11 @@ layout: default
 title: SHOP | andseethingsasido
 ---
 
-<!-- 引入哥特字体仅供弹窗 Contact 标题使用 -->
+<!-- 引入哥特字体供 Contact 弹窗使用 -->
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 
 <!-- ✟ ERD 极简商品陈列场 ✟ -->
-<div class="container">
+<div class="container product-container">
     <div class="product-grid" id="gridBox"></div>
 </div>
 
@@ -22,13 +22,20 @@ title: SHOP | andseethingsasido
 </div>
 
 <style>
-    /* ==========================================================
-       仅保留当前页面专属：商品货架与公众号弹窗样式
-       （导航栏 Header 与 Footer 已由 _layouts/default 统一管控）
-       ========================================================== */
-    .container {
+    /* 1. 防止 fixed Header 遮挡最上排商品 */
+    body {
+        padding-top: 90px;
+    }
+    @media (max-width: 768px) {
+        body {
+            padding-top: 60px;
+        }
+    }
+
+    /* 2. 商品货架布局 */
+    .container.product-container {
         max-width: 1350px;
-        margin: 60px auto;
+        margin: 40px auto;
         padding: 0 40px;
     }
 
@@ -36,6 +43,7 @@ title: SHOP | andseethingsasido
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 60px 40px;
+        min-height: 200px;
     }
 
     .product-item-link {
@@ -54,7 +62,7 @@ title: SHOP | andseethingsasido
     .product-image-box {
         width: 100%;
         aspect-ratio: 3 / 4;
-        background-color: #ffffff;
+        background-color: #f9f9f9;
         overflow: hidden;
         margin-bottom: 12px;
         display: flex;
@@ -99,9 +107,7 @@ title: SHOP | andseethingsasido
         margin: 0;
     }
 
-    /* ==========================================================
-       微信二维码弹窗系统
-       ========================================================== */
+    /* 3. 微信二维码弹窗系统 */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -183,7 +189,7 @@ title: SHOP | andseethingsasido
     .close-btn:hover { color: #000000; }
 
     @media (max-width: 768px) {
-        .container { margin: 40px auto; padding: 0 15px; }
+        .container.product-container { margin: 30px auto; padding: 0 15px; }
         .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; }
         .product-name { font-size: 10px; }
         .product-price { font-size: 10px; }
@@ -191,44 +197,75 @@ title: SHOP | andseethingsasido
 </style>
 
 <script>
-    // 1. 动态读取 products.json 渲染商品货架
-    fetch("{{ '/products.json' | relative_url }}")
-        .then(response => response.json())
-        .then(products => {
-            const gridBox = document.getElementById('gridBox');
-            
-            products.forEach((product, index) => {
-                const itemLink = document.createElement('a');
-                itemLink.href = product.link;
-                itemLink.className = 'product-item-link';
-                itemLink.target = '_blank';
-                itemLink.style.animationDelay = `${index * 0.08}s`; 
-                
-                itemLink.innerHTML = `
-                    <div class="product-image-box">
-                        <img src="${product.image}" alt="${product.name}">
-                    </div>
-                    <div class="product-info-meta">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-price">${product.price}</p>
-                    </div>
-                `;
-                
-                gridBox.appendChild(itemLink);
+    document.addEventListener('DOMContentLoaded', function() {
+        // 提取 Jekyll 站点基准路径，自动纠正 GitHub Pages 子路径
+        const siteBaseUrl = "{{ '' | relative_url }}".replace(/\/$/, '');
+
+        // 路径补全函数
+        function fixPath(path) {
+            if (!path) return '';
+            if (path.startsWith('http://') || path.startsWith('https://')) return path;
+            const cleanPath = path.startsWith('/') ? path : '/' + path;
+            return siteBaseUrl + cleanPath;
+        }
+
+        // 1. 读取 JSON 渲染商品
+        const jsonUrl = "{{ '/products.json' | relative_url }}";
+        const gridBox = document.getElementById('gridBox');
+
+        if (gridBox) {
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('无法读取 products.json，HTTP 状态: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(products => {
+                    gridBox.innerHTML = ''; // 清空提示内容
+
+                    if (!products || products.length === 0) {
+                        gridBox.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999; font-size: 11px;">[ 暂无商品数据 ]</p>';
+                        return;
+                    }
+
+                    products.forEach((product, index) => {
+                        const itemLink = document.createElement('a');
+                        itemLink.href = fixPath(product.link) || '#';
+                        itemLink.className = 'product-item-link';
+                        itemLink.target = '_blank';
+                        itemLink.style.animationDelay = `${index * 0.08}s`; 
+
+                        const imgSrc = fixPath(product.image);
+
+                        itemLink.innerHTML = `
+                            <div class="product-image-box">
+                                <img src="${imgSrc}" alt="${product.name || 'Product'}">
+                            </div>
+                            <div class="product-info-meta">
+                                <h3 class="product-name">${product.name || ''}</h3>
+                                <p class="product-price">${product.price || ''}</p>
+                            </div>
+                        `;
+                        
+                        gridBox.appendChild(itemLink);
+                    });
+                })
+                .catch(error => {
+                    console.error('加载商品失败:', error);
+                    gridBox.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #999; font-size: 11px;">[ 商品加载失败: ${error.message} ]</p>`;
+                });
+        }
+
+        // 2. 微信公众号弹窗逻辑
+        const modal = document.getElementById('qrcodeModal');
+        const closeBtn = document.getElementById('closeTrigger');
+
+        if (closeBtn && modal) {
+            closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+            modal.addEventListener('click', (e) => { 
+                if (e.target === modal) modal.classList.remove('active'); 
             });
-        })
-        .catch(error => console.error('读取商品数据失败:', error));
-
-    // 2. 公众号弹窗交互控制
-    const modal = document.getElementById('qrcodeModal');
-    const closeBtn = document.getElementById('closeTrigger');
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-    }
-    if (modal) {
-        modal.addEventListener('click', (e) => { 
-            if (e.target === modal) modal.classList.remove('active'); 
-        });
-    }
+        }
+    });
 </script>
