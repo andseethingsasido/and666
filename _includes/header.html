@@ -1,5 +1,5 @@
 <!-- ==========================================================
-    ✟ GOTHIC LUXURY HANDHELD NAVIGATION HEADER (LIGHT MODE) ✟
+    ✟ GOTHIC LUXURY HANDHELD NAVIGATION HEADER (DARK MENU) ✟
     ========================================================== -->
 
 <!-- 🌟 全局浏览器小图标 -->
@@ -11,7 +11,7 @@
          src="{{ '/images/logo.png' | relative_url }}" 
          alt="LOGO" 
          id="headerLogoBtn"
-         onclick="window.location.href='{{ '/' | relative_url }}'">
+         onclick="window.location.href='https://andseethingsasido.github.io/'">
 
     <div class="menu-trigger" id="menuTrigger">
         <div class="menu-trigger-icon">
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<!-- 2. 样式层 (CSS) - 已针对浅色背景完成反色适配 -->
+<!-- 2. 样式层 (CSS) -->
 <style>
     @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
@@ -65,7 +65,7 @@
         pointer-events: none;
     }
 
-    /* Logo 适配浅色背景：默认反色为黑色图片 */
+    /* Logo 适配：未展开时在白底上显示为黑色，展开时（黑底）切回白色 */
     .logo-btn {
         width: auto;
         cursor: pointer;
@@ -73,10 +73,10 @@
         z-index: 10003;
         transition: transform 0.3s, filter 0.3s; 
         pointer-events: auto;
-        filter: invert(1); /* 原白色 logo 反转为黑色，适应白色背景 */
+        filter: invert(1); /* 白底页面：反转为黑 Logo */
     }
     .logo-btn:hover { transform: scale(1.02); }
-    .logo-btn.active { filter: invert(1) !important; } /* 保持黑色 */
+    .logo-btn.active { filter: none !important; } /* 菜单展开黑底时：变回原图白色 */
 
     .menu-trigger {
         position: absolute;
@@ -95,26 +95,27 @@
         justify-content: space-between;
     }
 
-    /* 菜单图标线：默认改为黑色以适应白底 */
+    /* 三道杠图标：未展开时黑色，展开时变白色 */
     .menu-trigger-icon span { 
         display: block; 
         width: 100%; 
-        background: #000000; /* 原 #fff 改为纯黑 */
+        background: #000000; /* 白底页面默认为黑线 */
         transition: background 0.3s, transform 0.3s; 
     }
     
-    .menu-trigger.active .menu-trigger-icon span { background: #000000; }
+    .menu-trigger.active .menu-trigger-icon span { 
+        background: #ffffff; /* 菜单展开（黑底）时切为白线 */
+    }
 
-    /* 下拉菜单 */
+    /* 下拉菜单：背景设为黑色 */
     #dropdown-menu {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         transform: translateY(-100%); 
-        background: #ffffff; 
-        border-bottom: 1px solid #ececec; /* 增加底部细分割线，防止与白底背景混在一起 */
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* 增加极轻微阴影 */
+        background: #000000; /* 展开菜单为纯黑背景 */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         box-sizing: border-box;
         z-index: 10001;
@@ -132,18 +133,19 @@
         gap: 24px; 
     }
     
+    /* 展开菜单内的文字与按钮：纯白 */
     .menu-item {
         font-family: "Helvetica Neue", Helvetica, Arial, -apple-system, sans-serif;
         font-size: 20px; 
         font-weight: 700; 
         letter-spacing: 0.15em; 
-        color: #000000; 
+        color: #ffffff; /* 纯白文字 */
         cursor: pointer;
         transition: opacity 0.25s ease;
         white-space: nowrap;
         margin-right: -0.15em; 
     }
-    .menu-item:hover { opacity: 0.5; }
+    .menu-item:hover { opacity: 0.6; }
 
     /* 弹窗样式 */
     .modal-overlay {
@@ -152,7 +154,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(255, 255, 255, 0.96); 
+        background-color: rgba(0, 0, 0, 0.85); /* 遮罩暗化 */
         backdrop-filter: blur(4px); 
         display: flex;
         justify-content: center;
