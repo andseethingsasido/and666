@@ -1,3 +1,7 @@
+---
+layout: null
+title: SHOP | andseethingsasido
+---
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -110,7 +114,6 @@
             white-space: nowrap;
             transform-origin: right center; 
             
-            /* 🛠 通过两端对齐让“商店”与“公众号”右侧边缘完全对齐 */
             width: 105px; 
             text-align: justify;
             text-align-last: justify; 
@@ -120,9 +123,7 @@
             transform: scale(1.03); 
         }
 
-        /* ==========================================================
-           📱 独立响应式尺寸
-           ========================================================== */
+        /* 📱 独立响应式尺寸 */
         @media (max-width: 768px) {
             body { padding-top: 55px; }
             #header { height: 40px; }
@@ -134,7 +135,7 @@
             #dropdown-menu { padding: 65px 40px 35px; }
 
             .container { margin: 40px auto; padding: 0 15px; }
-            .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; } /* 移动端双列紧凑 */
+            .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; }
             .product-name { font-size: 10px; }
             .product-price { font-size: 10px; }
         }
@@ -159,11 +160,10 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 干净利落的 4 列布局 */
-            gap: 60px 40px; /* 极大的空旷留白感 */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 60px 40px;
         }
 
-        /* 商品单项转化为纯粹图文超链接 */
         .product-item-link {
             text-decoration: none;
             color: inherit;
@@ -192,17 +192,15 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(10%); /* 略带冷调微灰 */
+            filter: grayscale(10%);
             transition: transform 0.6s ease, filter 0.6s ease;
         }
 
-        /* 悬停时极其轻微的反馈 */
         .product-item-link:hover img {
             transform: scale(1.01);
             filter: grayscale(0%);
         }
 
-        /* 彻底删减多余修饰，全大写，极低调 */
         .product-info-meta {
             text-align: left;
             padding-left: 2px;
@@ -223,7 +221,7 @@
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 400;
-            color: #777777; /* 极淡的价格存在感 */
+            color: #777777;
             margin: 0;
         }
 
@@ -234,7 +232,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.92); /* 极淡的透白虚化 */
+            background-color: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(4px); 
             display: flex;
             justify-content: center;
@@ -252,7 +250,7 @@
 
         .modal-content {
             background-color: #ffffff; 
-            border: 1px solid #000000; /* 要求的纯黑色硬朗边框 */
+            border: 1px solid #000000;
             padding: 35px; 
             text-align: center;
             max-width: 320px;
@@ -308,10 +306,10 @@
 </head>
 <body>
 
-    <!-- ✟ 顶部导航栏（完美反转纯黑） ✟ -->
+    <!-- ✟ 顶部导航栏 ✟ -->
     <div id="header">
-        <!-- 🛠 已确认图片路径为 logo.png -->
-        <img src="logo.png" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
+        <!-- 🌟 使用 relative_url 指向 images/logo.png -->
+        <img src="{{ '/images/logo.png' | relative_url }}" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
         
         <div class="menu-trigger" id="menuTrigger">
             <div class="menu-trigger-icon">
@@ -323,7 +321,7 @@
         
         <div id="dropdown-menu">
             <div class="menu-links">
-                <div class="menu-item" onclick="closeMenu();location.href='https://andseethingsasido.github.io/and666/'">商店</div>
+                <div class="menu-item" onclick="closeMenu();location.href='{{ '/' | relative_url }}'">商店</div>
                 <div class="menu-item" onclick="closeMenu();document.getElementById('qrcodeModal').classList.add('active')">公众号</div>
             </div>
         </div>
@@ -339,15 +337,15 @@
         <div class="modal-content">
             <span class="close-btn" id="closeTrigger">&times;</span>
             <div class="modal-title">Contact</div>
-            <!-- 🛠 已修改图片路径为 gozhonghao.jpg -->
-            <img src="gozhonghao.jpg" alt="微信二维码" class="qrcode-img">
+            <!-- 🌟 使用 relative_url 指向 images/gozhonghao.jpg -->
+            <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
             <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
         </div>
     </div>
 
     <script>
-        // A. 动态读取并渲染 ERD 极简流线货架
-        fetch('products.json')
+        // A. 动态读取 JSON，补全相对路径
+        fetch("{{ '/products.json' | relative_url }}")
             .then(response => response.json())
             .then(products => {
                 const gridBox = document.getElementById('gridBox');
