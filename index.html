@@ -1,454 +1,234 @@
 ---
-layout: null
+layout: default
 title: SHOP | andseethingsasido
 ---
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHOP | andseethingsasido</title>
-    <!-- 引入经典衬线与等宽质感字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Courier+Prime&display=swap" rel="stylesheet">
-    <style>
-        /* 1. ERD 标志性冷白底色与绝对简练排版 */
-        html, body {
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff; 
-            color: #000000; 
-            font-family: "Helvetica Neue", Arial, "Courier Prime", monospace, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-        img { user-select: none; -webkit-user-drag: none; }
 
-        /* 2. ✟ 顶部导航栏（完美反转纯黑） ✟ */
-        #header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: transparent;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            z-index: 10000;
-            box-sizing: border-box;
-            padding: 0 40px;
-        }
+<!-- ✟ ERD 极简商品陈列场 ✟ -->
+<div class="container">
+    <div class="product-grid" id="gridBox"></div>
+</div>
 
-        /* 靠左 Logo 纯黑 */
-        .logo-btn {
-            width: auto;
-            cursor: pointer;
-            position: relative;
-            z-index: 10003;
-            filter: invert(0); 
-            transition: transform 0.3s, filter 0.3s; 
-        }
-        .logo-btn:hover {
-            transform: scale(1.02);
-        }
-        .logo-btn.active {
-            filter: invert(1); /* 菜单打开时变白 */
-        }
+<!-- 公众号 / 联系弹窗 -->
+<div class="modal-overlay" id="qrcodeModal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeTrigger">&times;</span>
+        <div class="modal-title">CONTACT</div>
+        <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
+        <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
+    </div>
+</div>
 
-        /* 右侧汉堡菜单（纯黑线） */
-        .menu-trigger {
-            position: absolute;
-            right: 40px;
-            top: 0;
-            display: flex;
-            align-items: center;
-            z-index: 10002;
-            cursor: pointer;
-        }
-        .menu-trigger-icon {
-            display: flex;
-            flex-direction: column;
-        }
-        .menu-trigger-icon span {
-            display: block;
-            width: 100%;
-            background: #000000; 
-            transition: background 0.3s;
-        }
-        .menu-trigger.active .menu-trigger-icon span {
-            background: #ffffff; 
-        }
+<style>
+    /* --------------------------------------------------
+       1. 仅保留页面专属货架与弹窗样式
+       字体自动继承主仓库布局 (inherit)，保持绝对统一
+    -------------------------------------------------- */
+    .container {
+        max-width: 1350px;
+        margin: 60px auto;
+        padding: 0 40px;
+    }
 
-        /* 下拉菜单（保持黑底白字） */
-        #dropdown-menu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            transform: translateY(-100%); 
-            background: #000000; 
-            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-            box-sizing: border-box;
-            z-index: 10001;
-            display: flex;
-            justify-content: flex-end; 
-        }
-        #dropdown-menu.show {
-            transform: translateY(0);
-        }
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 60px 40px;
+    }
 
-        .menu-links {
-            display: flex;
-            flex-direction: column;
-            gap: 20px; 
-            align-items: flex-end; /* 让链接容器整体靠右对齐 */
-        }
-        .menu-item {
-            font-size: 18px; 
-            font-weight: 600; 
-            letter-spacing: 6px; 
-            color: #aaaaaa; 
-            cursor: pointer;
-            transition: color 0.3s, transform 0.3s;
-            text-transform: uppercase;
-            white-space: nowrap;
-            transform-origin: right center; 
+    .product-item-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        opacity: 0;
+        transform: translateY(15px);
+        animation: erdUnveil 0.8s forwards cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    @keyframes erdUnveil {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-image-box {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        background-color: #ffffff;
+        overflow: hidden;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .product-image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(10%);
+        transition: transform 0.6s ease, filter 0.6s ease;
+    }
+
+    .product-item-link:hover img {
+        transform: scale(1.01);
+        filter: grayscale(0%);
+    }
+
+    .product-info-meta {
+        text-align: left;
+        padding-left: 2px;
+    }
+
+    .product-name {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 400; /* 采用极致简约的标准字重 */
+        margin: 0 0 4px 0;
+        color: #000000;
+        line-height: 1.4;
+    }
+
+    .product-price {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 300;
+        color: #777777;
+        margin: 0;
+    }
+
+    /* --------------------------------------------------
+       2. 二维码弹窗质感微调（匹配主仓库极简排版）
+    -------------------------------------------------- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(4px); 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 100003;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-content {
+        background-color: #ffffff; 
+        border: 1px solid #000000;
+        padding: 35px; 
+        text-align: center;
+        max-width: 300px;
+        width: 90%;
+        position: relative;
+        transform: scale(0.96);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: scale(1);
+    }
+
+    .modal-title {
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 25px;
+        color: #000000;
+    }
+
+    .qrcode-img {
+        width: 150px; 
+        height: 150px;
+        object-fit: contain;
+        margin: 0 auto 20px auto;
+        display: block;
+        filter: grayscale(100%);
+        transition: filter 0.3s;
+    }
+
+    .qrcode-img:hover { filter: grayscale(0%); }
+
+    .modal-desc {
+        font-size: 10px;
+        color: #666666;
+        letter-spacing: 1.5px;
+        line-height: 1.6;
+        text-transform: uppercase;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        font-size: 20px;
+        color: #999999;
+        cursor: pointer;
+        transition: color 0.3s;
+        line-height: 1;
+    }
+
+    .close-btn:hover { color: #000000; }
+
+    @media (max-width: 768px) {
+        .container { margin: 40px auto; padding: 0 15px; }
+        .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; }
+        .product-name { font-size: 10px; }
+        .product-price { font-size: 10px; }
+    }
+</style>
+
+<script>
+    // 动态拉取 JSON 数据并渲染商品
+    fetch("{{ '/products.json' | relative_url }}")
+        .then(response => response.json())
+        .then(products => {
+            const gridBox = document.getElementById('gridBox');
             
-            /* 🛠 修复排版：取消强制两端对齐与宽度限制 */
-            width: auto; 
-            text-align: right;
-        }
-        .menu-item:hover {
-            color: #ffffff; 
-            transform: scale(1.03); 
-        }
-
-        /* ==========================================================
-           📱 独立响应式尺寸
-           ========================================================== */
-        @media (max-width: 768px) {
-            body { padding-top: 55px; }
-            #header { height: 40px; }
-            .logo-btn { height: 20px; } 
-            .menu-trigger { height: 40px; }
-            .menu-trigger-icon { width: 16px; }
-            .menu-trigger-icon span { height: 1px; margin-bottom: 4px; }
-            .menu-trigger-icon span:last-child { margin-bottom: 0; }
-            #dropdown-menu { padding: 65px 40px 35px; }
-
-            .container { margin: 40px auto; padding: 0 15px; }
-            .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 30px 15px !important; }
-            .product-name { font-size: 10px; }
-            .product-price { font-size: 10px; }
-        }
-
-        @media (min-width: 769px) {
-            body { padding-top: 90px; }
-            #header { height: 55px; }
-            .logo-btn { height: 35px; } 
-            .menu-trigger { height: 55px; }
-            .menu-trigger-icon { width: 22px; } 
-            .menu-trigger-icon span { height: 2px; margin-bottom: 4px; } 
-            .menu-trigger-icon span:last-child { margin-bottom: 0; }
-            #dropdown-menu { padding: 85px 40px 35px; }
-        }
-
-        /* 3. ✟ ERD 风格商品陈列场 ✟ */
-        .container {
-            max-width: 1350px;
-            margin: 60px auto;
-            padding: 0 40px;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 60px 40px;
-        }
-
-        .product-item-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            opacity: 0;
-            transform: translateY(15px);
-            animation: erdUnveil 0.8s forwards cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        @keyframes erdUnveil {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .product-image-box {
-            width: 100%;
-            aspect-ratio: 3 / 4;
-            background-color: #ffffff;
-            overflow: hidden;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .product-image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(10%);
-            transition: transform 0.6s ease, filter 0.6s ease;
-        }
-
-        .product-item-link:hover img {
-            transform: scale(1.01);
-            filter: grayscale(0%);
-        }
-
-        .product-info-meta {
-            text-align: left;
-            padding-left: 2px;
-        }
-
-        .product-name {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 500;
-            margin: 0 0 4px 0;
-            color: #000000;
-            line-height: 1.4;
-        }
-
-        .product-price {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 400;
-            color: #777777;
-            margin: 0;
-        }
-
-        /* 4. 二维码遮罩系统 */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(4px); 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100003;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background-color: #ffffff; 
-            border: 1px solid #000000;
-            padding: 35px; 
-            text-align: center;
-            max-width: 320px;
-            width: 90%;
-            position: relative;
-            transform: scale(0.96);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-title {
-            font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 26px;
-            margin-bottom: 25px;
-            color: #000000;
-        }
-
-        .qrcode-img {
-            width: 160px; 
-            height: 160px;
-            object-fit: contain;
-            margin: 0 auto 20px auto;
-            display: block;
-            filter: grayscale(100%);
-            transition: filter 0.3s;
-        }
-        .qrcode-img:hover { filter: grayscale(0%); }
-
-        .modal-desc {
-            font-size: 11px;
-            color: #666666;
-            letter-spacing: 1px;
-            line-height: 1.6;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 22px;
-            color: #999999;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .close-btn:hover { color: #000000; }
-    </style>
-</head>
-<body>
-
-    <!-- ✟ 顶部导航栏 ✟ -->
-    <div id="header">
-        <img src="{{ '/images/logo.png' | relative_url }}" class="logo-btn" id="logoBtn" onclick="location.href='https://andseethingsasido.github.io/'">
-        
-        <div class="menu-trigger" id="menuTrigger">
-            <div class="menu-trigger-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-        
-        <div id="dropdown-menu">
-            <div class="menu-links">
-                <div class="menu-item" onclick="closeMenu();location.href='{{ '/' | relative_url }}'">商店</div>
-                <div class="menu-item" onclick="closeMenu();document.getElementById('qrcodeModal').classList.add('active')">公众号</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ERD 货架主场 -->
-    <div class="container">
-        <div class="product-grid" id="gridBox"></div>
-    </div>
-
-    <!-- 公众号弹窗 -->
-    <div class="modal-overlay" id="qrcodeModal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeTrigger">&times;</span>
-            <div class="modal-title">Contact</div>
-            <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
-            <div class="modal-desc">扫描上方二维码<br>向主理人发起主线咨询或定制采购</div>
-        </div>
-    </div>
-
-    <script>
-        // A. 动态读取并渲染 ERD 极简流线货架
-        fetch("{{ '/products.json' | relative_url }}")
-            .then(response => response.json())
-            .then(products => {
-                const gridBox = document.getElementById('gridBox');
+            products.forEach((product, index) => {
+                const itemLink = document.createElement('a');
+                itemLink.href = product.link;
+                itemLink.className = 'product-item-link';
+                itemLink.target = '_blank';
+                itemLink.style.animationDelay = `${index * 0.08}s`; 
                 
-                products.forEach((product, index) => {
-                    const itemLink = document.createElement('a');
-                    itemLink.href = product.link;
-                    itemLink.className = 'product-item-link';
-                    itemLink.target = '_blank';
-                    itemLink.style.animationDelay = `${index * 0.08}s`; 
-                    
-                    itemLink.innerHTML = `
-                        <div class="product-image-box">
-                            <img src="${product.image}" alt="${product.name}">
-                        </div>
-                        <div class="product-info-meta">
-                            <h3 class="product-name">${product.name}</h3>
-                            <p class="product-price">${product.price}</p>
-                        </div>
-                    `;
-                    
-                    gridBox.appendChild(itemLink);
-                });
-            })
-            .catch(error => console.error('读取商品数据失败:', error));
+                itemLink.innerHTML = `
+                    <div class="product-image-box">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info-meta">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-price">${product.price}</p>
+                    </div>
+                `;
+                
+                gridBox.appendChild(itemLink);
+            });
+        })
+        .catch(error => console.error('读取商品数据失败:', error));
 
-        // B. 高级交互控制引擎
-        const trigger = document.getElementById('menuTrigger');
-        const menu = document.getElementById('dropdown-menu');
-        const logo = document.getElementById('logoBtn');
-        const modal = document.getElementById('qrcodeModal');
-        const closeBtn = document.getElementById('closeTrigger');
-
-        let isHoveringTrigger = false;
-        let isHoveringMenu = false;
-        let isHoveringLogo = false;
-        let isClickOpen = false;
-
-        function openMenu() {
-            menu.classList.add('show');
-            trigger.classList.add('active');
-            logo.classList.add('active');
-        }
-
-        function closeMenu() {
-            menu.classList.remove('show');
-            trigger.classList.remove('active');
-            logo.classList.remove('active');
-            isClickOpen = false;
-        }
-
-        function checkMenuStatus() {
-            setTimeout(() => {
-                if (!isHoveringTrigger && !isHoveringMenu && !isHoveringLogo && !isClickOpen) {
-                    closeMenu();
-                }
-            }, 50);
-        }
-
-        logo.addEventListener('mouseenter', () => {
-            isHoveringLogo = true;
-            if (menu.classList.contains('show')) openMenu();
-        });
-        logo.addEventListener('mouseleave', () => {
-            isHoveringLogo = false;
-            checkMenuStatus();
-        });
-
-        trigger.addEventListener('mouseenter', () => {
-            isHoveringTrigger = true;
-            openMenu();
-        });
-        trigger.addEventListener('mouseleave', () => {
-            isHoveringTrigger = false;
-            checkMenuStatus();
-        });
-
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (menu.classList.contains('show') && isClickOpen) {
-                closeMenu();
-            } else {
-                isClickOpen = true;
-                openMenu();
-            }
-        });
-
-        menu.addEventListener('mouseenter', () => { isHoveringMenu = true; });
-        menu.addEventListener('mouseleave', () => { isHoveringMenu = false; checkMenuStatus(); });
-
-        document.addEventListener('click', (e) => {
-            if (isClickOpen && !menu.contains(e.target) && !trigger.contains(e.target)) {
-                closeMenu();
-            }
-        });
-
-        window.addEventListener('scroll', () => {
-            if (menu.classList.contains('show')) closeMenu();
-        }, { passive: true });
-
-        // C. 弹窗控制
+    // 弹窗关闭逻辑
+    const modal = document.getElementById('qrcodeModal');
+    const closeBtn = document.getElementById('closeTrigger');
+    if (closeBtn) {
         closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
-    </script>
-</body>
-</html>
+    }
+    if (modal) {
+        modal.addEventListener('click', (e) => { 
+            if (e.target === modal) modal.classList.remove('active'); 
+        });
+    }
+</script>
