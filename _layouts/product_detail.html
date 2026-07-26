@@ -21,9 +21,9 @@ layout: default
         </div>
     </div>
 
-    <!-- 中栏：纯净产品图（瞬间跳转 + 极简粗线指针） -->
+    <!-- 中栏：产品图（0延迟切图 + 框内局部放大镜） -->
     <div class="pdp-col-center">
-        <div class="pdp-gallery-container">
+        <div class="pdp-gallery-container" id="galleryContainer">
             <div class="pdp-gallery" id="pdpGallery">
                 {% for img in page.gallery %}
                     <div class="pdp-slide">
@@ -31,6 +31,8 @@ layout: default
                     </div>
                 {% endfor %}
             </div>
+            <!-- 🔍 奢侈品同款：框内放大镜层 -->
+            <div class="pdp-zoom-lens" id="zoomLens"></div>
         </div>
     </div>
 
@@ -51,12 +53,6 @@ layout: default
         <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
         <div class="modal-desc">扫描二维码向主理人发起款式咨询</div>
     </div>
-</div>
-
-<!-- 🔍 居中点击：放大细节浮层 ✟ -->
-<div class="lightbox-overlay" id="lightbox">
-    <span class="lightbox-close" id="lightboxClose">&times;</span>
-    <img src="" alt="Detail View" id="lightboxImg">
 </div>
 
 <style>
@@ -107,14 +103,8 @@ layout: default
         font-weight: 600;
     }
 
-    .pdp-details-box ul {
-        padding-left: 15px;
-        margin: 0;
-    }
-
-    .pdp-details-box li {
-        margin-bottom: 6px;
-    }
+    .pdp-details-box ul { padding-left: 15px; margin: 0; }
+    .pdp-details-box li { margin-bottom: 6px; }
 
     .pdp-size-box table {
         width: 100%;
@@ -131,15 +121,16 @@ layout: default
 
     .pdp-size-box th { font-weight: 600; color: #000; text-transform: uppercase; }
 
-    /* 🖼️ 产品图容器（禁用 smooth 实现瞬间跳转） */
+    /* 🖼️ 产品图与放大镜容器 */
     .pdp-gallery-container {
         width: 100%;
         position: relative;
+        overflow: hidden; /* 保证放大镜严格在照片框内 */
     }
 
     .pdp-gallery {
         display: flex;
-        overflow-x: hidden; /* 禁用原生的触控滑动，完全由点击精准控制直接跳转 */
+        overflow-x: hidden;
         gap: 0;
     }
 
@@ -158,31 +149,23 @@ layout: default
         pointer-events: none;
     }
 
-    /* 🔍 放大大图 Lightbox 样式 */
-    .lightbox-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(255, 255, 255, 0.98);
-        z-index: 999999;
-        display: flex; justify-content: center; align-items: center;
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.2s ease;
-        cursor: zoom-out;
+    /* 🔍 框内局部放大镜（Lens）样式 */
+    .pdp-zoom-lens {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+        background-repeat: no-repeat;
+        background-size: 250%; /* 2.5 倍高清放大 */
+        background-position: 0% 0%;
+        z-index: 10;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
     }
 
-    .lightbox-overlay.active {
-        opacity: 1; pointer-events: auto;
-    }
-
-    .lightbox-overlay img {
-        max-width: 90%;
-        max-height: 90vh;
-        object-fit: contain;
-    }
-
-    .lightbox-close {
-        position: absolute; top: 20px; right: 25px;
-        font-size: 32px; cursor: pointer; color: #000; font-weight: 300;
+    .pdp-zoom-lens.active {
+        opacity: 1;
     }
 
     /* -------------------------------------------------- */
@@ -196,9 +179,7 @@ layout: default
             padding: 20px 20px 80px;
         }
 
-        .pdp-col-left, .pdp-col-center, .pdp-col-right {
-            display: contents;
-        }
+        .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
 
         .pdp-title { order: 1; text-align: center; margin-bottom: 20px; }
         .pdp-gallery-container { order: 2; margin-bottom: 25px; }
@@ -208,7 +189,7 @@ layout: default
     }
 
     /* -------------------------------------------------- */
-    /* 💻 PC 端布局 (屏宽 >= 992px) - 统一上下居中对齐 */
+    /* 💻 PC 端布局 (屏宽 >= 992px) - 统一水平线上上下居中 */
     /* -------------------------------------------------- */
     @media (min-width: 992px) {
         .pdp-wrapper {
@@ -216,27 +197,17 @@ layout: default
             grid-template-columns: 1fr 1.1fr 1fr;
             gap: 60px;
             max-width: 1300px;
-            min-height: calc(100vh - 160px); /* 占据屏幕高度，实现视觉上的绝对垂直居中 */
+            min-height: calc(100vh - 160px);
             margin: 0 auto;
             padding: 40px;
-            align-items: center; /* ⭐️ 三栏内容统一在同一条水平线上上下居中 */
+            align-items: center;
         }
 
-        .pdp-col-left {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .pdp-col-left, .pdp-col-right {
+            display: flex; flex-direction: column; justify-content: center;
         }
 
-        .pdp-col-center {
-            width: 100%;
-        }
-
-        .pdp-col-right {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+        .pdp-col-center { width: 100%; }
     }
 
     /* 微信弹窗 */
@@ -259,62 +230,72 @@ layout: default
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const galleryContainer = document.getElementById('galleryContainer');
         const gallery = document.getElementById('pdpGallery');
         const slides = gallery ? gallery.querySelectorAll('.pdp-slide') : [];
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
+        const zoomLens = document.getElementById('zoomLens');
 
-        // 🎨 极简加粗 SVG 鼠标指针 (Stroke Width: 3)
-        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 18 18, w-resize`;
-        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 18 18, e-resize`;
-        const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 18 18, zoom-in`;
+        // 🎨 缩小 2/3 后的微型粗线 SVG 鼠标指针 (原 36px 现等比例缩至 12px)
+        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 6 6, w-resize`;
+        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 6 6, e-resize`;
+        const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 6 6, zoom-in`;
 
         let currentIndex = 0;
 
-        if (gallery && slides.length > 0) {
-            // 1. 鼠标位置监测，动态改变指针
-            gallery.addEventListener('mousemove', (e) => {
-                const rect = gallery.getBoundingClientRect();
+        if (galleryContainer && gallery && slides.length > 0) {
+            // 1. 鼠标移动监听：指针样式切换 & 框内局部放大计算
+            galleryContainer.addEventListener('mousemove', (e) => {
+                const rect = galleryContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
-                const ratio = x / rect.width;
+                const y = e.clientY - rect.top;
+                const ratioX = x / rect.width;
+                const ratioY = y / rect.height;
 
-                if (ratio < 0.35) {
-                    gallery.style.cursor = leftArrowCursor;
-                } else if (ratio > 0.65) {
-                    gallery.style.cursor = rightArrowCursor;
+                if (ratioX < 0.35) {
+                    // 左区：左箭头指针，隐藏放大镜
+                    galleryContainer.style.cursor = leftArrowCursor;
+                    if (zoomLens) zoomLens.classList.remove('active');
+                } else if (ratioX > 0.65) {
+                    // 右区：右箭头指针，隐藏放大镜
+                    galleryContainer.style.cursor = rightArrowCursor;
+                    if (zoomLens) zoomLens.classList.remove('active');
                 } else {
-                    gallery.style.cursor = plusCursor;
-                }
-            });
-
-            // 2. 点击事件：0 延迟直接跳转图片
-            gallery.addEventListener('click', (e) => {
-                const rect = gallery.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const ratio = x / rect.width;
-
-                if (ratio < 0.35) {
-                    // 左侧：上一张 (直接跳转)
-                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-                    gallery.scrollLeft = currentIndex * gallery.clientWidth;
-                } else if (ratio > 0.65) {
-                    // 右侧：下一张 (直接跳转)
-                    currentIndex = (currentIndex + 1) % slides.length;
-                    gallery.scrollLeft = currentIndex * gallery.clientWidth;
-                } else {
-                    // 中间：放大查看大图细节
-                    const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
-                    if (currentImg && lightbox && lightboxImg) {
-                        lightboxImg.src = currentImg.src;
-                        lightbox.classList.add('active');
+                    // ⭐️ 中间区：加号指针，激活框内局部放大镜
+                    galleryContainer.style.cursor = plusCursor;
+                    if (zoomLens) {
+                        const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
+                        if (currentImg) {
+                            zoomLens.style.backgroundImage = `url('${currentImg.src}')`;
+                            zoomLens.style.backgroundPosition = `${ratioX * 100}% ${ratioY * 100}%`;
+                            zoomLens.classList.add('active');
+                        }
                     }
                 }
             });
-        }
 
-        // 关闭放大浮层
-        if (lightbox) {
-            lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
+            // 鼠标离开图片框时关闭放大镜
+            galleryContainer.addEventListener('mouseleave', () => {
+                if (zoomLens) zoomLens.classList.remove('active');
+            });
+
+            // 2. 点击事件：左/右区域瞬间 0 延迟切换图片
+            galleryContainer.addEventListener('click', (e) => {
+                const rect = galleryContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const ratioX = x / rect.width;
+
+                if (ratioX < 0.35) {
+                    // 上一张
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    gallery.scrollLeft = currentIndex * gallery.clientWidth;
+                    if (zoomLens) zoomLens.classList.remove('active');
+                } else if (ratioX > 0.65) {
+                    // 下一张
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    gallery.scrollLeft = currentIndex * gallery.clientWidth;
+                    if (zoomLens) zoomLens.classList.remove('active');
+                }
+            });
         }
 
         // 微信弹窗逻辑
