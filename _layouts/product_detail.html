@@ -45,10 +45,9 @@ layout: default
     </div>
 </div>
 
-<!-- ✟ 右侧大尺寸联动抽屉弹窗 ✟ -->
+<!-- ✟ 右侧无界抽屉弹窗 ✟ -->
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
 <div class="right-drawer" id="rightDrawer">
-    <span class="drawer-close-btn" id="closeDrawerBtn">&times;</span>
     <div class="drawer-inner">
         <!-- 1. 上方：产品名称与价格 -->
         <div class="drawer-header">
@@ -56,15 +55,15 @@ layout: default
             <div class="drawer-product-price">{{ page.price }}</div>
         </div>
 
-        <!-- 2. 中间：二维码 -->
+        <!-- 2. 中间：纯净二维码（无线条/无边框，上下留白） -->
         <div class="qrcode-wrapper">
             <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
         </div>
 
-        <!-- 3. 下方：扫码咨询与服务提示 -->
+        <!-- 3. 下方：扫码咨询提示 -->
         <div class="drawer-footer">
-            <div class="drawer-subtitle">微信扫描二维码向主理人发起款式咨询</div>
-            <div class="drawer-tips">支持全国顺丰包邮</div>
+            <div class="drawer-subtitle">扫描二维码向主理人发起款式咨询</div>
+            <div class="drawer-tips">支持全国顺丰包邮 / 专属客服一对一尺码建议</div>
         </div>
     </div>
 </div>
@@ -78,15 +77,15 @@ layout: default
         min-height: 100vh;
     }
 
-    /* ⭐️ 产品名称调为 20px */
+    /* ⭐️ 产品名称精准设为 13px */
     .pdp-title {
-        font-size: 20px;
+        font-size: 13px;
         font-weight: 600;
         letter-spacing: 2.5px;
         text-transform: uppercase;
         color: #000;
-        line-height: 1.4;
-        margin-bottom: 30px;
+        line-height: 1.5;
+        margin-bottom: 25px;
     }
 
     .pdp-buy-btn {
@@ -189,12 +188,12 @@ layout: default
     .pdp-zoom-lens.active { opacity: 1; }
 
     /* -------------------------------------------------- */
-    /* 👉 右侧抽屉弹窗（全部居中 + 上名称/下扫码） */
+    /* 👉 极致极简右侧抽屉弹窗 (无关闭按钮 / 无框线) */
     /* -------------------------------------------------- */
     .drawer-backdrop {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.15);
         backdrop-filter: blur(2px);
         z-index: 99998;
         opacity: 0;
@@ -209,78 +208,70 @@ layout: default
 
     .right-drawer {
         position: fixed;
-        top: 0; right: 0; /* ⭐️ 换到右边 */
-        width: 400px;
+        top: 0; right: 0;
+        width: 380px;
         max-width: 85vw;
         height: 100vh;
         background: #fff;
         z-index: 99999;
         transform: translateX(100%);
         transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.03);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center; /* 水平居中 */
+        align-items: center;
         padding: 40px 30px;
         box-sizing: border-box;
+        touch-action: pan-y;
     }
 
     .right-drawer.active {
         transform: translateX(0);
     }
 
-    .drawer-close-btn {
-        position: absolute;
-        top: 25px; right: 25px;
-        font-size: 28px;
-        cursor: pointer;
-        color: #000;
-        font-weight: 300;
-    }
-
     .drawer-inner {
         width: 100%;
-        text-align: center; /* ⭐️ 内部文字与元素全部居中 */
+        text-align: center;
     }
 
     .drawer-header {
-        margin-bottom: 25px;
+        margin-bottom: 10px;
     }
 
     .drawer-product-title {
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 600;
         letter-spacing: 2px;
         text-transform: uppercase;
         color: #000;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
 
     .drawer-product-price {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
         letter-spacing: 1.5px;
-        color: #333;
+        color: #666;
     }
 
+    /* 🖼️ 二维码：去除边框线条，保留优美留白 */
     .qrcode-wrapper {
         text-align: center;
-        margin-bottom: 25px;
+        margin: 32px 0; /* 二维码上下增加舒展留白 */
     }
 
     .qrcode-img {
-        width: 170px;
-        height: 170px;
+        width: 160px;
+        height: 160px;
         filter: grayscale(100%);
-        border: 1px solid #eee;
-        padding: 8px;
+        border: none; /* 去除边框 */
+        padding: 0;    /* 去除内边距 */
         display: inline-block;
     }
 
     .drawer-footer {
-        border-top: 1px solid #eee;
-        padding-top: 20px;
+        border-top: none; /* 去除分隔线 */
     }
 
     .drawer-subtitle {
@@ -292,7 +283,7 @@ layout: default
     }
 
     .drawer-tips {
-        color: #888;
+        color: #999;
         font-size: 10px;
         letter-spacing: 1px;
     }
@@ -315,7 +306,7 @@ layout: default
 
         .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
 
-        .pdp-title { order: 1; text-align: center; margin-bottom: 20px; font-size: 18px; }
+        .pdp-title { order: 1; text-align: center; margin-bottom: 20px; font-size: 13px; }
         .pdp-gallery-container { order: 2; margin-bottom: 25px; }
         .pdp-buy-btn { order: 3; margin-bottom: 35px; }
         .pdp-details-box { order: 4; width: 100%; margin-bottom: 30px; }
@@ -358,7 +349,6 @@ layout: default
 
         .pdp-gallery { overflow-x: hidden; }
 
-        /* 右侧抽屉打开时，整页向左微调，完美联动避让 */
         .pdp-wrapper.drawer-open {
             transform: translateX(-80px);
         }
@@ -473,12 +463,11 @@ layout: default
         });
 
         // --------------------------------------------------
-        // 3. 👉 右侧大抽屉弹窗控制
+        // 3. 👉 右侧抽屉弹窗（向右滑动 & 点击外部收回）
         // --------------------------------------------------
         const rightDrawer = document.getElementById('rightDrawer');
         const drawerBackdrop = document.getElementById('drawerBackdrop');
         const openBtn = document.getElementById('openModalBtn');
-        const closeBtn = document.getElementById('closeDrawerBtn');
 
         function openDrawer() {
             if (rightDrawer) rightDrawer.classList.add('active');
@@ -493,7 +482,25 @@ layout: default
         }
 
         if (openBtn) openBtn.addEventListener('click', openDrawer);
-        if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+        // 点击弹窗遮罩外部自动收回
         if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
+
+        // 📱/💻 监听右滑（Swipe Right）手势关闭抽屉
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        if (rightDrawer) {
+            rightDrawer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            rightDrawer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                // 向右滑动超过 50px 则触发收回
+                if (touchEndX - touchStartX > 50) {
+                    closeDrawer();
+                }
+            }, { passive: true });
+        }
     });
 </script>
