@@ -3,7 +3,7 @@ layout: default
 ---
 
 <div class="pdp-wrapper">
-    <!-- 左栏（PC端）：产品名字 + 面料工艺介绍 -->
+    <!-- 左栏：产品名字 + 面料与工艺介绍 -->
     <div class="pdp-col-left">
         <h1 class="pdp-title">{{ page.title }}</h1>
         <div class="pdp-details-box">
@@ -21,7 +21,7 @@ layout: default
         </div>
     </div>
 
-    <!-- 中栏：纯净产品图（无显眼按钮，依靠鼠标位置变指针交互） -->
+    <!-- 中栏：纯净产品图（瞬间跳转 + 极简粗线指针） -->
     <div class="pdp-col-center">
         <div class="pdp-gallery-container">
             <div class="pdp-gallery" id="pdpGallery">
@@ -34,7 +34,7 @@ layout: default
         </div>
     </div>
 
-    <!-- 右栏（PC端）：购买按钮 + 尺码表 -->
+    <!-- 右栏：价格/购买按钮 + 尺码表 -->
     <div class="pdp-col-right">
         <button class="pdp-buy-btn" id="openModalBtn">{{ page.price }}</button>
         <div class="pdp-size-box">
@@ -64,10 +64,11 @@ layout: default
     .pdp-title {
         font-size: 13px;
         font-weight: 600;
-        letter-spacing: 2px;
+        letter-spacing: 2.5px;
         text-transform: uppercase;
         color: #000;
-        line-height: 1.4;
+        line-height: 1.5;
+        margin-bottom: 25px;
     }
 
     .pdp-buy-btn {
@@ -78,19 +79,21 @@ layout: default
         border: none;
         font-size: 12px;
         letter-spacing: 3px;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
         text-transform: uppercase;
-        transition: opacity 0.3s;
+        transition: opacity 0.2s;
+        margin-bottom: 25px;
     }
 
-    .pdp-buy-btn:hover { opacity: 0.85; }
+    .pdp-buy-btn:hover { opacity: 0.8; }
 
     .pdp-details-box, .pdp-size-box {
         font-size: 11px;
         line-height: 1.8;
         letter-spacing: 1.2px;
         color: #333;
+        width: 100%;
     }
 
     .pdp-details-box h3, .pdp-size-box h3 {
@@ -98,17 +101,25 @@ layout: default
         letter-spacing: 2px;
         text-transform: uppercase;
         margin: 0 0 12px 0;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #000;
         color: #000;
+        font-weight: 600;
     }
 
-    .pdp-details-box ul { padding-left: 15px; margin: 0; }
+    .pdp-details-box ul {
+        padding-left: 15px;
+        margin: 0;
+    }
+
+    .pdp-details-box li {
+        margin-bottom: 6px;
+    }
 
     .pdp-size-box table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 10px;
+        margin-top: 5px;
     }
 
     .pdp-size-box th, .pdp-size-box td {
@@ -120,7 +131,7 @@ layout: default
 
     .pdp-size-box th { font-weight: 600; color: #000; text-transform: uppercase; }
 
-    /* 🖼️ 无缝平铺相册 */
+    /* 🖼️ 产品图容器（禁用 smooth 实现瞬间跳转） */
     .pdp-gallery-container {
         width: 100%;
         position: relative;
@@ -128,18 +139,12 @@ layout: default
 
     .pdp-gallery {
         display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        overflow-x: hidden; /* 禁用原生的触控滑动，完全由点击精准控制直接跳转 */
         gap: 0;
     }
 
-    .pdp-gallery::-webkit-scrollbar { display: none; }
-
     .pdp-slide {
         flex: 0 0 100%;
-        scroll-snap-align: start;
         aspect-ratio: 3 / 4;
         background-color: #f9f9f9;
         overflow: hidden;
@@ -150,7 +155,7 @@ layout: default
         height: 100%;
         object-fit: cover;
         user-select: none;
-        pointer-events: none; /* 让鼠标事件由父容器接管 */
+        pointer-events: none;
     }
 
     /* 🔍 放大大图 Lightbox 样式 */
@@ -161,7 +166,7 @@ layout: default
         z-index: 999999;
         display: flex; justify-content: center; align-items: center;
         opacity: 0; pointer-events: none;
-        transition: opacity 0.25s ease;
+        transition: opacity 0.2s ease;
         cursor: zoom-out;
     }
 
@@ -173,12 +178,11 @@ layout: default
         max-width: 90%;
         max-height: 90vh;
         object-fit: contain;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
 
     .lightbox-close {
         position: absolute; top: 20px; right: 25px;
-        font-size: 30px; cursor: pointer; color: #000;
+        font-size: 32px; cursor: pointer; color: #000; font-weight: 300;
     }
 
     /* -------------------------------------------------- */
@@ -204,38 +208,35 @@ layout: default
     }
 
     /* -------------------------------------------------- */
-    /* 💻 PC 端布局 (屏宽 >= 992px) */
+    /* 💻 PC 端布局 (屏宽 >= 992px) - 统一上下居中对齐 */
     /* -------------------------------------------------- */
     @media (min-width: 992px) {
         .pdp-wrapper {
             display: grid;
-            grid-template-columns: 1fr 1.2fr 1fr;
-            gap: 50px;
+            grid-template-columns: 1fr 1.1fr 1fr;
+            gap: 60px;
             max-width: 1300px;
-            margin: 40px auto 100px;
-            padding: 0 40px;
-            align-items: start;
+            min-height: calc(100vh - 160px); /* 占据屏幕高度，实现视觉上的绝对垂直居中 */
+            margin: 0 auto;
+            padding: 40px;
+            align-items: center; /* ⭐️ 三栏内容统一在同一条水平线上上下居中 */
         }
 
         .pdp-col-left {
             display: flex;
             flex-direction: column;
-            position: sticky;
-            top: 110px;
+            justify-content: center;
         }
 
-        .pdp-title { margin-bottom: 35px; }
-
-        .pdp-col-center { width: 100%; }
+        .pdp-col-center {
+            width: 100%;
+        }
 
         .pdp-col-right {
             display: flex;
             flex-direction: column;
-            position: sticky;
-            top: 110px;
+            justify-content: center;
         }
-
-        .pdp-buy-btn { margin-bottom: 35px; }
     }
 
     /* 微信弹窗 */
@@ -263,12 +264,15 @@ layout: default
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
 
-        // 矢量的左右箭头 SVG Cursor
-        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>') 16 16, w-resize`;
-        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>') 16 16, e-resize`;
+        // 🎨 极简加粗 SVG 鼠标指针 (Stroke Width: 3)
+        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 18 18, w-resize`;
+        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 18 18, e-resize`;
+        const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 18 18, zoom-in`;
+
+        let currentIndex = 0;
 
         if (gallery && slides.length > 0) {
-            // 1. 鼠标悬停位置改变指针样式
+            // 1. 鼠标位置监测，动态改变指针
             gallery.addEventListener('mousemove', (e) => {
                 const rect = gallery.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -279,26 +283,27 @@ layout: default
                 } else if (ratio > 0.65) {
                     gallery.style.cursor = rightArrowCursor;
                 } else {
-                    gallery.style.cursor = 'zoom-in';
+                    gallery.style.cursor = plusCursor;
                 }
             });
 
-            // 2. 点击判定：左/中/右
+            // 2. 点击事件：0 延迟直接跳转图片
             gallery.addEventListener('click', (e) => {
                 const rect = gallery.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const ratio = x / rect.width;
 
                 if (ratio < 0.35) {
-                    // 左侧：上一张
-                    gallery.scrollBy({ left: -gallery.clientWidth, behavior: 'smooth' });
+                    // 左侧：上一张 (直接跳转)
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    gallery.scrollLeft = currentIndex * gallery.clientWidth;
                 } else if (ratio > 0.65) {
-                    // 右侧：下一张
-                    gallery.scrollBy({ left: gallery.clientWidth, behavior: 'smooth' });
+                    // 右侧：下一张 (直接跳转)
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    gallery.scrollLeft = currentIndex * gallery.clientWidth;
                 } else {
-                    // 中间：全屏看大图细节
-                    const activeIndex = Math.round(gallery.scrollLeft / gallery.clientWidth);
-                    const currentImg = slides[activeIndex] ? slides[activeIndex].querySelector('img') : null;
+                    // 中间：放大查看大图细节
+                    const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
                     if (currentImg && lightbox && lightboxImg) {
                         lightboxImg.src = currentImg.src;
                         lightbox.classList.add('active');
