@@ -21,7 +21,7 @@ layout: default
         </div>
     </div>
 
-    <!-- 中栏：产品图（0延迟切图 + 框内局部放大镜） -->
+    <!-- 中栏：产品图（0延迟切图 + 点击框内放大） -->
     <div class="pdp-col-center">
         <div class="pdp-gallery-container" id="galleryContainer">
             <div class="pdp-gallery" id="pdpGallery">
@@ -31,7 +31,7 @@ layout: default
                     </div>
                 {% endfor %}
             </div>
-            <!-- 🔍 奢侈品同款：框内放大镜层 -->
+            <!-- 🔍 框内局部放大镜层 -->
             <div class="pdp-zoom-lens" id="zoomLens"></div>
         </div>
     </div>
@@ -92,13 +92,14 @@ layout: default
         width: 100%;
     }
 
+    /* ✂️ 去除长划线，保持纯粹留白 */
     .pdp-details-box h3, .pdp-size-box h3 {
         font-size: 11px;
         letter-spacing: 2px;
         text-transform: uppercase;
         margin: 0 0 12px 0;
-        padding-bottom: 6px;
-        border-bottom: 1px solid #000;
+        padding-bottom: 0;
+        border-bottom: none;
         color: #000;
         font-weight: 600;
     }
@@ -125,12 +126,11 @@ layout: default
     .pdp-gallery-container {
         width: 100%;
         position: relative;
-        overflow: hidden; /* 保证放大镜严格在照片框内 */
+        overflow: hidden;
     }
 
     .pdp-gallery {
         display: flex;
-        overflow-x: hidden;
         gap: 0;
     }
 
@@ -149,7 +149,7 @@ layout: default
         pointer-events: none;
     }
 
-    /* 🔍 框内局部放大镜（Lens）样式 */
+    /* 🔍 框内局部放大镜 */
     .pdp-zoom-lens {
         position: absolute;
         top: 0; left: 0;
@@ -158,10 +158,9 @@ layout: default
         opacity: 0;
         transition: opacity 0.15s ease-out;
         background-repeat: no-repeat;
-        background-size: 250%; /* 2.5 倍高清放大 */
+        background-size: 250%; /* 2.5倍放大 */
         background-position: 0% 0%;
         z-index: 10;
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
     }
 
     .pdp-zoom-lens.active {
@@ -169,7 +168,7 @@ layout: default
     }
 
     /* -------------------------------------------------- */
-    /* 📱 移动端布局 (屏宽 < 992px) */
+    /* 📱 移动端布局 (屏宽 < 992px) - 恢复极流畅滑动 */
     /* -------------------------------------------------- */
     @media (max-width: 991px) {
         .pdp-wrapper {
@@ -186,10 +185,20 @@ layout: default
         .pdp-buy-btn { order: 3; margin-bottom: 35px; }
         .pdp-details-box { order: 4; width: 100%; margin-bottom: 30px; }
         .pdp-size-box { order: 5; width: 100%; }
+
+        /* 📱 移动端开启触控左右滑动 */
+        .pdp-gallery {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .pdp-gallery::-webkit-scrollbar { display: none; }
+        .pdp-slide { scroll-snap-align: start; }
     }
 
     /* -------------------------------------------------- */
-    /* 💻 PC 端布局 (屏宽 >= 992px) - 统一水平线上上下居中 */
+    /* 💻 PC 端布局 (屏宽 >= 992px) - 精准控制跳转与放大 */
     /* -------------------------------------------------- */
     @media (min-width: 992px) {
         .pdp-wrapper {
@@ -208,6 +217,10 @@ layout: default
         }
 
         .pdp-col-center { width: 100%; }
+
+        .pdp-gallery {
+            overflow-x: hidden;
+        }
     }
 
     /* 微信弹窗 */
@@ -235,16 +248,20 @@ layout: default
         const slides = gallery ? gallery.querySelectorAll('.pdp-slide') : [];
         const zoomLens = document.getElementById('zoomLens');
 
-        // 🎨 缩小 2/3 后的微型粗线 SVG 鼠标指针 (原 36px 现等比例缩至 12px)
-        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 6 6, w-resize`;
-        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 6 6, e-resize`;
-        const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 6 6, zoom-in`;
+        // 🎨 增大 1/3 后的微型粗线 SVG 鼠标指针 (等比例缩至 16px)
+        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 8 8, w-resize`;
+        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 8 8, e-resize`;
+        const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 8 8, zoom-in`;
+        const minusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 8 8, zoom-out`;
 
         let currentIndex = 0;
+        let isZoomActive = false; // 跟踪放大状态（点击后激活）
 
         if (galleryContainer && gallery && slides.length > 0) {
-            // 1. 鼠标移动监听：指针样式切换 & 框内局部放大计算
+            // 1. 鼠标移动监听：指针样式 & 放大时坐标更新
             galleryContainer.addEventListener('mousemove', (e) => {
+                if (window.innerWidth < 992) return; // 移动端不运行 PC 鼠标逻辑
+
                 const rect = galleryContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -252,48 +269,61 @@ layout: default
                 const ratioY = y / rect.height;
 
                 if (ratioX < 0.35) {
-                    // 左区：左箭头指针，隐藏放大镜
                     galleryContainer.style.cursor = leftArrowCursor;
-                    if (zoomLens) zoomLens.classList.remove('active');
                 } else if (ratioX > 0.65) {
-                    // 右区：右箭头指针，隐藏放大镜
                     galleryContainer.style.cursor = rightArrowCursor;
-                    if (zoomLens) zoomLens.classList.remove('active');
                 } else {
-                    // ⭐️ 中间区：加号指针，激活框内局部放大镜
-                    galleryContainer.style.cursor = plusCursor;
-                    if (zoomLens) {
-                        const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
-                        if (currentImg) {
-                            zoomLens.style.backgroundImage = `url('${currentImg.src}')`;
-                            zoomLens.style.backgroundPosition = `${ratioX * 100}% ${ratioY * 100}%`;
-                            zoomLens.classList.add('active');
-                        }
-                    }
+                    galleryContainer.style.cursor = isZoomActive ? minusCursor : plusCursor;
+                }
+
+                // 如果处于放大状态，实时跟随鼠标更新画面背景
+                if (isZoomActive && zoomLens) {
+                    zoomLens.style.backgroundPosition = `${ratioX * 100}% ${ratioY * 100}%`;
                 }
             });
 
-            // 鼠标离开图片框时关闭放大镜
+            // 移出容器，自动关闭放大状态
             galleryContainer.addEventListener('mouseleave', () => {
+                isZoomActive = false;
                 if (zoomLens) zoomLens.classList.remove('active');
             });
 
-            // 2. 点击事件：左/右区域瞬间 0 延迟切换图片
+            // 2. 点击监听：控制 0 延迟切图与点击放大开关
             galleryContainer.addEventListener('click', (e) => {
+                if (window.innerWidth < 992) return;
+
                 const rect = galleryContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const ratioX = x / rect.width;
 
                 if (ratioX < 0.35) {
-                    // 上一张
+                    // 点击左区：上一张
+                    isZoomActive = false;
+                    if (zoomLens) zoomLens.classList.remove('active');
                     currentIndex = (currentIndex - 1 + slides.length) % slides.length;
                     gallery.scrollLeft = currentIndex * gallery.clientWidth;
-                    if (zoomLens) zoomLens.classList.remove('active');
                 } else if (ratioX > 0.65) {
-                    // 下一张
+                    // 点击右区：下一张
+                    isZoomActive = false;
+                    if (zoomLens) zoomLens.classList.remove('active');
                     currentIndex = (currentIndex + 1) % slides.length;
                     gallery.scrollLeft = currentIndex * gallery.clientWidth;
-                    if (zoomLens) zoomLens.classList.remove('active');
+                } else {
+                    // ⭐️ 点击中区：开/关 框内放大
+                    isZoomActive = !isZoomActive;
+                    if (isZoomActive && zoomLens) {
+                        const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
+                        if (currentImg) {
+                            zoomLens.style.backgroundImage = `url('${currentImg.src}')`;
+                            const y = e.clientY - rect.top;
+                            zoomLens.style.backgroundPosition = `${ratioX * 100}% ${(y / rect.height) * 100}%`;
+                            zoomLens.classList.add('active');
+                            galleryContainer.style.cursor = minusCursor;
+                        }
+                    } else if (zoomLens) {
+                        zoomLens.classList.remove('active');
+                        galleryContainer.style.cursor = plusCursor;
+                    }
                 }
             });
         }
