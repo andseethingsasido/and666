@@ -3,7 +3,8 @@
     "id": "01",
     "name": "and666宽松直通牛仔裤",
     "price": "CNY 200",
-    "image": "item1.jpg",
+    "image": "tupian/ku1.jpg",
+    "hover_image": "tupian/ku2.jpg",
     "link": "https://xxxxx"
   }
 ]
