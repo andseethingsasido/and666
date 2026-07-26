@@ -2,7 +2,7 @@
 layout: default
 ---
 
-<div class="pdp-wrapper">
+<div class="pdp-wrapper" id="pdpWrapper">
     <!-- 左栏：产品名字 + 面料与工艺介绍 -->
     <div class="pdp-col-left">
         <h1 class="pdp-title">{{ page.title }}</h1>
@@ -21,7 +21,7 @@ layout: default
         </div>
     </div>
 
-    <!-- 中栏：产品图（0延迟切图 + 点击框内放大） -->
+    <!-- 中栏：产品图（0延迟切图 + 点击/双击放大） -->
     <div class="pdp-col-center">
         <div class="pdp-gallery-container" id="galleryContainer">
             <div class="pdp-gallery" id="pdpGallery">
@@ -31,7 +31,7 @@ layout: default
                     </div>
                 {% endfor %}
             </div>
-            <!-- 🔍 框内局部放大镜层 -->
+            <!-- 🔍 PC 端框内局部放大镜 -->
             <div class="pdp-zoom-lens" id="zoomLens"></div>
         </div>
     </div>
@@ -45,26 +45,44 @@ layout: default
     </div>
 </div>
 
-<!-- ✟ 微信二维码弹窗 ✟ -->
-<div class="modal-overlay" id="pdpModal">
-    <div class="modal-content">
-        <span class="close-btn" id="closeModalBtn">&times;</span>
-        <div class="modal-title">Contact</div>
-        <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
-        <div class="modal-desc">扫描二维码向主理人发起款式咨询</div>
+<!-- ✟ 左侧大尺寸联动抽屉弹窗 ✟ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="left-drawer" id="leftDrawer">
+    <span class="drawer-close-btn" id="closeDrawerBtn">&times;</span>
+    <div class="drawer-inner">
+        <div class="drawer-title">PURCHASE & CONTACT</div>
+        <div class="drawer-subtitle">微信扫码或添加主理人沟通购买与订制</div>
+        
+        <div class="qrcode-wrapper">
+            <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
+        </div>
+
+        <div class="drawer-info-list">
+            <p><strong>款式：</strong>{{ page.title }}</p>
+            <p><strong>价格：</strong>{{ page.price }}</p>
+            <p class="drawer-tips">支持全国顺丰包邮 / 专属客服一对一尺码建议</p>
+        </div>
     </div>
 </div>
 
 <style>
     /* 全局与字体基础 */
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    /* ⭐️ 产品名称放大一倍（从 13px 放大至 26px） */
     .pdp-title {
-        font-size: 13px;
+        font-size: 26px;
         font-weight: 600;
-        letter-spacing: 2.5px;
+        letter-spacing: 3px;
         text-transform: uppercase;
         color: #000;
-        line-height: 1.5;
-        margin-bottom: 25px;
+        line-height: 1.3;
+        margin-bottom: 30px;
     }
 
     .pdp-buy-btn {
@@ -92,7 +110,7 @@ layout: default
         width: 100%;
     }
 
-    /* ✂️ 去除长划线，保持纯粹留白 */
+    /* 去除下划线，保留简洁留白 */
     .pdp-details-box h3, .pdp-size-box h3 {
         font-size: 11px;
         letter-spacing: 2px;
@@ -127,6 +145,7 @@ layout: default
         width: 100%;
         position: relative;
         overflow: hidden;
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .pdp-gallery {
@@ -147,9 +166,10 @@ layout: default
         object-fit: cover;
         user-select: none;
         pointer-events: none;
+        transition: transform 0.25s ease-out;
     }
 
-    /* 🔍 框内局部放大镜 */
+    /* 🔍 PC 框内局部放大镜 */
     .pdp-zoom-lens {
         position: absolute;
         top: 0; left: 0;
@@ -158,17 +178,112 @@ layout: default
         opacity: 0;
         transition: opacity 0.15s ease-out;
         background-repeat: no-repeat;
-        background-size: 250%; /* 2.5倍放大 */
+        background-size: 250%;
         background-position: 0% 0%;
         z-index: 10;
     }
 
-    .pdp-zoom-lens.active {
+    .pdp-zoom-lens.active { opacity: 1; }
+
+    /* -------------------------------------------------- */
+    /* 👈 左侧大尺寸展开抽屉（与产品图联动不遮挡） */
+    /* -------------------------------------------------- */
+    .drawer-backdrop {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(2px);
+        z-index: 99998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+
+    .drawer-backdrop.active {
         opacity: 1;
+        pointer-events: auto;
+    }
+
+    .left-drawer {
+        position: fixed;
+        top: 0; left: 0;
+        width: 420px;
+        max-width: 85vw;
+        height: 100vh;
+        background: #fff;
+        z-index: 99999;
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 40px 35px;
+        box-sizing: border-box;
+    }
+
+    .left-drawer.active {
+        transform: translateX(0);
+    }
+
+    .drawer-close-btn {
+        position: absolute;
+        top: 25px; right: 25px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #000;
+        font-weight: 300;
+    }
+
+    .drawer-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 2.5px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .drawer-subtitle {
+        font-size: 11px;
+        color: #666;
+        letter-spacing: 1px;
+        margin-bottom: 25px;
+    }
+
+    .qrcode-wrapper {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .qrcode-img {
+        width: 180px;
+        height: 180px;
+        filter: grayscale(100%);
+        border: 1px solid #eee;
+        padding: 8px;
+    }
+
+    .drawer-info-list {
+        font-size: 11px;
+        line-height: 1.8;
+        color: #333;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+    }
+
+    .drawer-tips {
+        color: #888;
+        font-size: 10px;
+        margin-top: 10px;
+    }
+
+    /* 当抽屉打开时，中间产品图缩小并退让 */
+    .pdp-wrapper.drawer-open .pdp-gallery-container {
+        transform: scale(0.82);
     }
 
     /* -------------------------------------------------- */
-    /* 📱 移动端布局 (屏宽 < 992px) - 恢复极流畅滑动 */
+    /* 📱 移动端布局 (屏宽 < 992px) */
     /* -------------------------------------------------- */
     @media (max-width: 991px) {
         .pdp-wrapper {
@@ -180,13 +295,12 @@ layout: default
 
         .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
 
-        .pdp-title { order: 1; text-align: center; margin-bottom: 20px; }
+        .pdp-title { order: 1; text-align: center; margin-bottom: 20px; font-size: 22px; }
         .pdp-gallery-container { order: 2; margin-bottom: 25px; }
         .pdp-buy-btn { order: 3; margin-bottom: 35px; }
         .pdp-details-box { order: 4; width: 100%; margin-bottom: 30px; }
         .pdp-size-box { order: 5; width: 100%; }
 
-        /* 📱 移动端开启触控左右滑动 */
         .pdp-gallery {
             overflow-x: auto;
             scroll-snap-type: x mandatory;
@@ -198,69 +312,62 @@ layout: default
     }
 
     /* -------------------------------------------------- */
-    /* 💻 PC 端布局 (屏宽 >= 992px) - 精准控制跳转与放大 */
+    /* 💻 PC 端布局 (屏宽 >= 992px) - 完美上下垂直居中 */
     /* -------------------------------------------------- */
     @media (min-width: 992px) {
         .pdp-wrapper {
             display: grid;
             grid-template-columns: 1fr 1.1fr 1fr;
-            gap: 60px;
-            max-width: 1300px;
-            min-height: calc(100vh - 160px);
+            gap: 50px;
+            max-width: 1350px;
+            min-height: 100vh; /* 确保占满屏幕高度 */
             margin: 0 auto;
-            padding: 40px;
-            align-items: center;
+            padding: 0 40px;
+            align-items: center; /* ⭐️ 核心：三栏在视口中绝对上下居中 */
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .pdp-col-left, .pdp-col-right {
-            display: flex; flex-direction: column; justify-content: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .pdp-col-center { width: 100%; }
 
-        .pdp-gallery {
-            overflow-x: hidden;
+        .pdp-gallery { overflow-x: hidden; }
+
+        /* PC端抽屉打开时，整页稍微向右微调，避开左侧大抽屉 */
+        .pdp-wrapper.drawer-open {
+            transform: translateX(80px);
         }
     }
-
-    /* 微信弹窗 */
-    .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(4px);
-        display: flex; justify-content: center; align-items: center;
-        z-index: 999999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content {
-        background: #fff; border: 1px solid #000;
-        padding: 35px 25px; text-align: center; width: 290px; position: relative;
-    }
-    .close-btn { position: absolute; top: 12px; right: 18px; font-size: 22px; cursor: pointer; color: #888; }
-    .qrcode-img { width: 160px; height: 160px; margin: 15px auto; display: block; filter: grayscale(100%); }
-    .modal-desc { font-size: 10px; color: #666; letter-spacing: 1px; }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const pdpWrapper = document.getElementById('pdpWrapper');
         const galleryContainer = document.getElementById('galleryContainer');
         const gallery = document.getElementById('pdpGallery');
         const slides = gallery ? gallery.querySelectorAll('.pdp-slide') : [];
         const zoomLens = document.getElementById('zoomLens');
 
-        // 🎨 增大 1/3 后的微型粗线 SVG 鼠标指针 (等比例缩至 16px)
+        // 🎨 增大 1/3 后的微型 SVG 鼠标指针 (16px)
         const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 8 8, w-resize`;
         const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 8 8, e-resize`;
         const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 8 8, zoom-in`;
         const minusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 8 8, zoom-out`;
 
         let currentIndex = 0;
-        let isZoomActive = false; // 跟踪放大状态（点击后激活）
+        let isZoomActive = false;
 
+        // --------------------------------------------------
+        // 1. PC 端切图与点击放大
+        // --------------------------------------------------
         if (galleryContainer && gallery && slides.length > 0) {
-            // 1. 鼠标移动监听：指针样式 & 放大时坐标更新
             galleryContainer.addEventListener('mousemove', (e) => {
-                if (window.innerWidth < 992) return; // 移动端不运行 PC 鼠标逻辑
+                if (window.innerWidth < 992) return;
 
                 const rect = galleryContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -276,19 +383,16 @@ layout: default
                     galleryContainer.style.cursor = isZoomActive ? minusCursor : plusCursor;
                 }
 
-                // 如果处于放大状态，实时跟随鼠标更新画面背景
                 if (isZoomActive && zoomLens) {
                     zoomLens.style.backgroundPosition = `${ratioX * 100}% ${ratioY * 100}%`;
                 }
             });
 
-            // 移出容器，自动关闭放大状态
             galleryContainer.addEventListener('mouseleave', () => {
                 isZoomActive = false;
                 if (zoomLens) zoomLens.classList.remove('active');
             });
 
-            // 2. 点击监听：控制 0 延迟切图与点击放大开关
             galleryContainer.addEventListener('click', (e) => {
                 if (window.innerWidth < 992) return;
 
@@ -297,19 +401,16 @@ layout: default
                 const ratioX = x / rect.width;
 
                 if (ratioX < 0.35) {
-                    // 点击左区：上一张
                     isZoomActive = false;
                     if (zoomLens) zoomLens.classList.remove('active');
                     currentIndex = (currentIndex - 1 + slides.length) % slides.length;
                     gallery.scrollLeft = currentIndex * gallery.clientWidth;
                 } else if (ratioX > 0.65) {
-                    // 点击右区：下一张
                     isZoomActive = false;
                     if (zoomLens) zoomLens.classList.remove('active');
                     currentIndex = (currentIndex + 1) % slides.length;
                     gallery.scrollLeft = currentIndex * gallery.clientWidth;
                 } else {
-                    // ⭐️ 点击中区：开/关 框内放大
                     isZoomActive = !isZoomActive;
                     if (isZoomActive && zoomLens) {
                         const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
@@ -328,12 +429,55 @@ layout: default
             });
         }
 
-        // 微信弹窗逻辑
-        const modal = document.getElementById('pdpModal');
+        // --------------------------------------------------
+        // 2. 📱 移动端双击照片放大/缩小监听
+        // --------------------------------------------------
+        slides.forEach(slide => {
+            let lastTap = 0;
+            let isMobileZoomed = false;
+            const img = slide.querySelector('img');
+
+            slide.addEventListener('touchend', function(e) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+
+                if (tapLength < 300 && tapLength > 0) {
+                    e.preventDefault();
+                    isMobileZoomed = !isMobileZoomed;
+                    if (img) {
+                        if (isMobileZoomed) {
+                            img.style.transform = 'scale(2.2)';
+                        } else {
+                            img.style.transform = 'scale(1)';
+                        }
+                    }
+                }
+                lastTap = currentTime;
+            });
+        });
+
+        // --------------------------------------------------
+        // 3. 👈 左侧大抽屉弹窗与产品图联动控制
+        // --------------------------------------------------
+        const leftDrawer = document.getElementById('leftDrawer');
+        const drawerBackdrop = document.getElementById('drawerBackdrop');
         const openBtn = document.getElementById('openModalBtn');
-        const closeBtn = document.getElementById('closeModalBtn');
-        if (openBtn && modal) openBtn.addEventListener('click', () => modal.classList.add('active'));
-        if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-        if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+        const closeBtn = document.getElementById('closeDrawerBtn');
+
+        function openDrawer() {
+            if (leftDrawer) leftDrawer.classList.add('active');
+            if (drawerBackdrop) drawerBackdrop.classList.add('active');
+            if (pdpWrapper) pdpWrapper.classList.add('drawer-open');
+        }
+
+        function closeDrawer() {
+            if (leftDrawer) leftDrawer.classList.remove('active');
+            if (drawerBackdrop) drawerBackdrop.classList.remove('active');
+            if (pdpWrapper) pdpWrapper.classList.remove('drawer-open');
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openDrawer);
+        if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+        if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
     });
 </script>
