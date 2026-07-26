@@ -2,30 +2,28 @@
 layout: default
 ---
 
-<div class="erd-pdp-container">
-    <!-- 左侧：无限平铺多图流 -->
-    <div class="erd-pdp-gallery">
-        {% for img in page.gallery %}
-            <img src="{{ img | relative_url }}" alt="{{ page.title }}">
-        {% endfor %}
+<div class="pdp-wrapper">
+    <!-- 1. 最上方：产品名字 -->
+    <h1 class="pdp-title">{{ page.title }}</h1>
+
+    <!-- 2. 产品照片（支持手机端左右手势滑动） -->
+    <div class="pdp-gallery-container">
+        <div class="pdp-gallery">
+            {% for img in page.gallery %}
+                <div class="pdp-slide">
+                    <img src="{{ img | relative_url }}" alt="{{ page.title }}">
+                </div>
+            {% endfor %}
+        </div>
+        <div class="pdp-swipe-hint">← SWIPE →</div>
     </div>
 
-    <!-- 右侧：固定详情信息栏 -->
-    <div class="erd-pdp-info">
-        <div class="erd-info-sticky">
-            <h1 class="erd-title">{{ page.title }}</h1>
-            <div class="erd-price">{{ page.price }}</div>
-            
-            <div class="erd-divider"></div>
+    <!-- 3. 购买/咨询按钮（只显示产品价格） -->
+    <button class="pdp-buy-btn" id="openModalBtn">{{ page.price }}</button>
 
-            <!-- Markdown 里的尺码表与文字内容 -->
-            <div class="erd-description">
-                {{ content }}
-            </div>
-
-            <!-- 点击拉起弹窗按钮 -->
-            <button class="erd-buy-btn" id="openModalBtn">INQUIRE / PURCHASE</button>
-        </div>
+    <!-- 4. 介绍与尺码表内容 -->
+    <div class="pdp-content">
+        {{ content }}
     </div>
 </div>
 
@@ -34,48 +32,175 @@ layout: default
     <div class="modal-content">
         <span class="close-btn" id="closeModalBtn">&times;</span>
         <div class="modal-title">Contact</div>
-        <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="二维码" class="qrcode-img">
-        <div class="modal-desc">扫描二维码向主理人咨询该款式</div>
+        <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
+        <div class="modal-desc">扫描二维码向主理人发起款式咨询</div>
     </div>
 </div>
 
 <style>
-    .erd-pdp-container {
-        max-width: 1300px;
-        margin: 40px auto 100px;
-        padding: 0 40px;
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 60px;
-    }
-    .erd-pdp-gallery { display: flex; flex-direction: column; gap: 20px; }
-    .erd-pdp-gallery img { width: 100%; height: auto; background-color: #f9f9f9; }
-    .erd-info-sticky { position: sticky; top: 110px; }
-    .erd-title { font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
-    .erd-price { font-size: 12px; color: #666; margin: 10px 0 20px; }
-    .erd-divider { height: 1px; background: #eee; margin: 20px 0; }
-    
-    /* 尺码表格样式 */
-    .erd-description table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 11px; }
-    .erd-description th, .erd-description td { border-bottom: 1px solid #eee; padding: 8px 4px; text-align: center; }
-    .erd-description th { font-weight: 600; text-transform: uppercase; }
-
-    .erd-buy-btn {
-        width: 100%; padding: 15px; background: #000; color: #fff;
-        border: none; font-size: 11px; letter-spacing: 2px; cursor: pointer; margin-top: 20px;
+    /* 全局与容器 */
+    .pdp-wrapper {
+        max-width: 650px;
+        margin: 20px auto 80px;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-    /* 弹窗样式 */
+    /* 1. 产品名字 */
+    .pdp-title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #000;
+        line-height: 1.4;
+    }
+
+    /* 2. 图片左右滑动区域 (CSS Scroll Snap 实现无缝滑块) */
+    .pdp-gallery-container {
+        width: 100%;
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .pdp-gallery {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* 隐藏滚动条 */
+        gap: 12px;
+    }
+
+    .pdp-gallery::-webkit-scrollbar {
+        display: none; /* Chrome/Safari 隐藏滚动条 */
+    }
+
+    .pdp-slide {
+        flex: 0 0 100%;
+        scroll-snap-align: start;
+        aspect-ratio: 3 / 4;
+        background-color: #f9f9f9;
+        overflow: hidden;
+    }
+
+    .pdp-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .pdp-swipe-hint {
+        text-align: center;
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: #bbb;
+        margin-top: 8px;
+        text-transform: uppercase;
+    }
+
+    /* 3. 购买按钮（只显示价格） */
+    .pdp-buy-btn {
+        width: 100%;
+        padding: 16px;
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 3px;
+        font-weight: 500;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-bottom: 35px;
+        transition: opacity 0.3s;
+    }
+
+    .pdp-buy-btn:hover {
+        opacity: 0.85;
+    }
+
+    /* 4. 排版与尺码表 */
+    .pdp-content {
+        width: 100%;
+        font-size: 11px;
+        line-height: 1.8;
+        letter-spacing: 1.2px;
+        color: #333;
+    }
+
+    .pdp-content h3 {
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin: 25px 0 12px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #eee;
+        color: #000;
+    }
+
+    .pdp-content ul {
+        padding-left: 15px;
+        margin-bottom: 20px;
+    }
+
+    .pdp-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0 30px;
+    }
+
+    .pdp-content th, .pdp-content td {
+        border-bottom: 1px solid #eee;
+        padding: 10px 4px;
+        text-align: center;
+        font-size: 10px;
+    }
+
+    .pdp-content th {
+        font-weight: 600;
+        color: #000;
+        text-transform: uppercase;
+    }
+
+    /* 微信弹窗 */
     .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,0.95); backdrop-filter: blur(4px);
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(4px);
         display: flex; justify-content: center; align-items: center;
-        z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        z-index: 999999;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
     }
-    .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { background: #fff; border: 1px solid #000; padding: 30px; text-align: center; position: relative; width: 300px; }
-    .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; }
-    .qrcode-img { width: 160px; height: 160px; margin: 15px 0; }
+
+    .modal-overlay.active {
+        opacity: 1; pointer-events: auto;
+    }
+
+    .modal-content {
+        background: #fff; border: 1px solid #000;
+        padding: 35px 25px; text-align: center;
+        width: 290px; position: relative;
+    }
+
+    .close-btn {
+        position: absolute; top: 12px; right: 18px;
+        font-size: 22px; cursor: pointer; color: #888;
+    }
+
+    .qrcode-img {
+        width: 160px; height: 160px; margin: 15px auto; display: block;
+        filter: grayscale(100%);
+    }
+
+    .qrcode-img:hover { filter: grayscale(0%); }
+
+    .modal-desc { font-size: 10px; color: #666; letter-spacing: 1px; }
 </style>
 
 <script>
@@ -84,8 +209,16 @@ layout: default
         const openBtn = document.getElementById('openModalBtn');
         const closeBtn = document.getElementById('closeModalBtn');
 
-        openBtn.addEventListener('click', () => modal.classList.add('active'));
-        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+        if (openBtn && modal) {
+            openBtn.addEventListener('click', () => modal.classList.add('active'));
+        }
+        if (closeBtn && modal) {
+            closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+        }
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+        }
     });
 </script>
