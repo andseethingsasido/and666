@@ -3,23 +3,27 @@ layout: default
 ---
 
 <div class="pdp-wrapper">
-    <!-- 左栏（PC端吸顶）：名字 + 介绍 -->
+    <!-- 左栏（PC端）：产品名字 + 面料工艺介绍 -->
     <div class="pdp-col-left">
         <h1 class="pdp-title">{{ page.title }}</h1>
         <div class="pdp-details-box">
             <h3>DETAILS / 面料与工艺</h3>
             <ul>
-            {% for item in page.details %}
-                <li>{{ item }}</li>
-            {% endfor %}
+            {% if page.details %}
+                {% for item in page.details %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            {% else %}
+                <li>100% 重磅棉质丹宁面料</li>
+                <li>手工多重做旧与洗水工艺</li>
+            {% endif %}
             </ul>
         </div>
     </div>
 
-    <!-- 中栏：图片展示区（PC优化：左右切换箭头 + 鼠标拖拽 + 页码指示） -->
+    <!-- 中栏：纯净产品图（无显眼按钮，依靠鼠标位置变指针交互） -->
     <div class="pdp-col-center">
         <div class="pdp-gallery-container">
-            <button class="pdp-arrow prev" id="prevSlide" aria-label="Previous">‹</button>
             <div class="pdp-gallery" id="pdpGallery">
                 {% for img in page.gallery %}
                     <div class="pdp-slide">
@@ -27,13 +31,10 @@ layout: default
                     </div>
                 {% endfor %}
             </div>
-            <button class="pdp-arrow next" id="nextSlide" aria-label="Next">›</button>
-            
-            <div class="pdp-counter" id="pdpCounter">1 / {{ page.gallery.size }}</div>
         </div>
     </div>
 
-    <!-- 右栏（PC端吸顶）：购买按钮 + 尺码表 -->
+    <!-- 右栏（PC端）：购买按钮 + 尺码表 -->
     <div class="pdp-col-right">
         <button class="pdp-buy-btn" id="openModalBtn">{{ page.price }}</button>
         <div class="pdp-size-box">
@@ -52,8 +53,14 @@ layout: default
     </div>
 </div>
 
+<!-- 🔍 居中点击：放大细节浮层 ✟ -->
+<div class="lightbox-overlay" id="lightbox">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img src="" alt="Detail View" id="lightboxImg">
+</div>
+
 <style>
-    /* 全局公共样式 */
+    /* 全局与字体基础 */
     .pdp-title {
         font-size: 13px;
         font-weight: 600;
@@ -113,7 +120,7 @@ layout: default
 
     .pdp-size-box th { font-weight: 600; color: #000; text-transform: uppercase; }
 
-    /* 🖼️ 图片轮播容器 */
+    /* 🖼️ 无缝平铺相册 */
     .pdp-gallery-container {
         width: 100%;
         position: relative;
@@ -125,11 +132,9 @@ layout: default
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        gap: 10px;
-        cursor: grab;
+        gap: 0;
     }
 
-    .pdp-gallery.active-drag { cursor: grabbing; scroll-snap-type: none; }
     .pdp-gallery::-webkit-scrollbar { display: none; }
 
     .pdp-slide {
@@ -145,36 +150,35 @@ layout: default
         height: 100%;
         object-fit: cover;
         user-select: none;
+        pointer-events: none; /* 让鼠标事件由父容器接管 */
     }
 
-    /* PC端左右导航箭头 */
-    .pdp-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 36px;
-        height: 36px;
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid #eee;
-        font-size: 20px;
-        line-height: 32px;
-        text-align: center;
-        cursor: pointer;
-        z-index: 10;
-        transition: all 0.2s;
-        display: none; /* 默认隐藏，PC端显示 */
+    /* 🔍 放大大图 Lightbox 样式 */
+    .lightbox-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(255, 255, 255, 0.98);
+        z-index: 999999;
+        display: flex; justify-content: center; align-items: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.25s ease;
+        cursor: zoom-out;
     }
 
-    .pdp-arrow:hover { background: #000; color: #fff; border-color: #000; }
-    .pdp-arrow.prev { left: 10px; }
-    .pdp-arrow.next { right: 10px; }
+    .lightbox-overlay.active {
+        opacity: 1; pointer-events: auto;
+    }
 
-    .pdp-counter {
-        text-align: center;
-        font-size: 9px;
-        letter-spacing: 2px;
-        color: #888;
-        margin-top: 10px;
+    .lightbox-overlay img {
+        max-width: 90%;
+        max-height: 90vh;
+        object-fit: contain;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .lightbox-close {
+        position: absolute; top: 20px; right: 25px;
+        font-size: 30px; cursor: pointer; color: #000;
     }
 
     /* -------------------------------------------------- */
@@ -188,7 +192,6 @@ layout: default
             padding: 20px 20px 80px;
         }
 
-        /* 拆解栏目，允许直接对其内部元素排序 */
         .pdp-col-left, .pdp-col-center, .pdp-col-right {
             display: contents;
         }
@@ -233,9 +236,6 @@ layout: default
         }
 
         .pdp-buy-btn { margin-bottom: 35px; }
-
-        /* PC端显示左右切换箭头 */
-        .pdp-arrow { display: block; }
     }
 
     /* 微信弹窗 */
@@ -259,41 +259,60 @@ layout: default
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const gallery = document.getElementById('pdpGallery');
-        const prevBtn = document.getElementById('prevSlide');
-        const nextBtn = document.getElementById('nextSlide');
-        const counter = document.getElementById('pdpCounter');
         const slides = gallery ? gallery.querySelectorAll('.pdp-slide') : [];
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+
+        // 矢量的左右箭头 SVG Cursor
+        const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>') 16 16, w-resize`;
+        const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>') 16 16, e-resize`;
 
         if (gallery && slides.length > 0) {
-            // 1. 箭头点击左右滑动
-            if (prevBtn) prevBtn.addEventListener('click', () => gallery.scrollBy({ left: -gallery.clientWidth, behavior: 'smooth' }));
-            if (nextBtn) nextBtn.addEventListener('click', () => gallery.scrollBy({ left: gallery.clientWidth, behavior: 'smooth' }));
-
-            // 2. 页码更新 (例如 1 / 5)
-            gallery.addEventListener('scroll', () => {
-                const index = Math.round(gallery.scrollLeft / gallery.clientWidth) + 1;
-                if (counter) counter.innerText = `${Math.min(index, slides.length)} / ${slides.length}`;
-            });
-
-            // 3. PC端鼠标按住拖拽滑动 (Drag to scroll)
-            let isDown = false, startX, scrollLeft;
-            gallery.addEventListener('mousedown', (e) => {
-                isDown = true;
-                gallery.classList.add('active-drag');
-                startX = e.pageX - gallery.offsetLeft;
-                scrollLeft = gallery.scrollLeft;
-            });
-            gallery.addEventListener('mouseleave', () => { isDown = false; gallery.classList.remove('active-drag'); });
-            gallery.addEventListener('mouseup', () => { isDown = false; gallery.classList.remove('active-drag'); });
+            // 1. 鼠标悬停位置改变指针样式
             gallery.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - gallery.offsetLeft;
-                gallery.scrollLeft = scrollLeft - (x - startX) * 1.8;
+                const rect = gallery.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const ratio = x / rect.width;
+
+                if (ratio < 0.35) {
+                    gallery.style.cursor = leftArrowCursor;
+                } else if (ratio > 0.65) {
+                    gallery.style.cursor = rightArrowCursor;
+                } else {
+                    gallery.style.cursor = 'zoom-in';
+                }
+            });
+
+            // 2. 点击判定：左/中/右
+            gallery.addEventListener('click', (e) => {
+                const rect = gallery.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const ratio = x / rect.width;
+
+                if (ratio < 0.35) {
+                    // 左侧：上一张
+                    gallery.scrollBy({ left: -gallery.clientWidth, behavior: 'smooth' });
+                } else if (ratio > 0.65) {
+                    // 右侧：下一张
+                    gallery.scrollBy({ left: gallery.clientWidth, behavior: 'smooth' });
+                } else {
+                    // 中间：全屏看大图细节
+                    const activeIndex = Math.round(gallery.scrollLeft / gallery.clientWidth);
+                    const currentImg = slides[activeIndex] ? slides[activeIndex].querySelector('img') : null;
+                    if (currentImg && lightbox && lightboxImg) {
+                        lightboxImg.src = currentImg.src;
+                        lightbox.classList.add('active');
+                    }
+                }
             });
         }
 
-        // 弹窗逻辑
+        // 关闭放大浮层
+        if (lightbox) {
+            lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
+        }
+
+        // 微信弹窗逻辑
         const modal = document.getElementById('pdpModal');
         const openBtn = document.getElementById('openModalBtn');
         const closeBtn = document.getElementById('closeModalBtn');
