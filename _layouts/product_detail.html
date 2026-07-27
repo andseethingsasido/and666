@@ -89,7 +89,7 @@ layout: default
         text-transform: uppercase;
         color: #000;
         line-height: 1.3;
-        margin-bottom: 25px;
+        margin-bottom: 12px; /* 间距缩小二分之一 (原25px) */
     }
 
     .pdp-buy-btn {
@@ -104,7 +104,7 @@ layout: default
         cursor: pointer;
         text-transform: uppercase;
         transition: opacity 0.2s;
-        margin-bottom: 25px;
+        margin-bottom: 12px; /* 间距缩小二分之一 (原25px) */
     }
     .pdp-buy-btn:hover { opacity: 0.8; }
 
@@ -276,14 +276,14 @@ layout: default
             align-items: center;
             padding: 20px 20px 80px;
             position: relative;
-            top: -22px; /* 移动端向上微调 -22px */
+            top: 278px; /* 整体向下移动 300px (-22px + 300px) */
         }
 
         .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
 
-        .pdp-title { order: 1; text-align: center; margin-bottom: 20px; font-size: 13px; }
+        .pdp-title { order: 1; text-align: center; margin-bottom: 12px; font-size: 13px; }
         .pdp-gallery-container { order: 2; margin-bottom: 25px; }
-        .pdp-buy-btn { order: 3; margin-bottom: 35px; }
+        .pdp-buy-btn { order: 3; margin-bottom: 12px; }
         .pdp-details-box { order: 4; width: 100%; margin-bottom: 30px; }
         .pdp-size-box { order: 5; width: 100%; }
 
@@ -302,40 +302,61 @@ layout: default
         .pdp-wrapper {
             display: grid;
             grid-template-columns: 1fr 1.1fr 1fr;
-            gap: 50px;
+            grid-template-rows: auto auto;
+            gap: 0 50px;
             max-width: 1350px;
             min-height: 100vh;
             margin: 0 auto;
             padding: 0 40px;
-            align-items: center; /* 中间大图垂直居中 */
+            align-content: center;
+            align-items: start;
             box-sizing: border-box;
             position: relative;
-            top: -95px; /* PC 端向上微调 -95px */
+            top: 205px; /* 整体向下移动 300px (-95px + 300px) */
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 🎯 关键对齐设置：左右栏顶端对齐，并重置标题/按钮的顶部边距 */
+        /* 打散左右栏，共享 Grid 第一行 */
         .pdp-col-left, .pdp-col-right {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-self: flex-start;
-            padding-top: 10px; /* 控制左右两侧相对于中间图片顶部的起步落差 */
+            display: contents;
         }
 
+        /* 第一行：产品名称 与 购买按钮 */
         .pdp-title { 
+            grid-column: 1;
+            grid-row: 1;
             font-size: 20px; 
             margin-top: 0;
             line-height: 1.2;
-            margin-bottom: 25px;
+            margin-bottom: 12px; /* 间距缩小二分之一 */
         }
 
         .pdp-buy-btn {
+            grid-column: 3;
+            grid-row: 1;
             margin-top: 0;
-            margin-bottom: 25px;
+            margin-bottom: 12px; /* 间距缩小二分之一 */
         }
 
-        .pdp-col-center { width: 100%; }
+        /* 第二行：面料介绍 与 尺码表 */
+        .pdp-details-box {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .pdp-size-box {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        /* 中间图：跨两行并保持居中 */
+        .pdp-col-center { 
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            align-self: center;
+            width: 100%; 
+        }
+
         .pdp-gallery { overflow-x: hidden; }
 
         .pdp-wrapper.drawer-open {
