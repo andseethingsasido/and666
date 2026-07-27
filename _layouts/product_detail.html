@@ -59,9 +59,9 @@ layout: default
             <div class="drawer-product-price">{{ page.price }}</div>
         </div>
 
-        <!-- 2. 中间：纯净二维码 -->
+        <!-- 2. 中间：纯净二维码 (已更新为 grwx.webp) -->
         <div class="qrcode-wrapper">
-            <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img" loading="lazy" decoding="async">
+            <img src="{{ '/images/grwx.webp' | relative_url }}" alt="微信二维码" class="qrcode-img" loading="lazy" decoding="async">
         </div>
 
         <!-- 3. 下方：扫码咨询提示 -->
@@ -276,7 +276,7 @@ layout: default
             align-items: center;
             padding: 20px 20px 80px;
             position: relative;
-            top: -22px; /* 移动端向上微调 -22px */
+            top: -22px;
         }
 
         .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
@@ -307,14 +307,13 @@ layout: default
             min-height: 100vh;
             margin: 0 auto;
             padding: 0 40px;
-            align-items: center; /* 中间大图垂直居中 */
+            align-items: center;
             box-sizing: border-box;
             position: relative;
-            top: -95px; /* PC 端向上微调 -95px */
+            top: -95px;
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 🎯 关键对齐设置：左右栏顶端对齐，并向下平移 310px (10px + 300px) */
         .pdp-col-left, .pdp-col-right {
             display: flex;
             flex-direction: column;
@@ -422,68 +421,115 @@ layout: default
             });
         }
 
-        // 2. 📱 移动端双击放大 + 拖拽细节
+        // 2. 📱 移动端双击放大 + 极速高刷硬件加速拖拽
         slides.forEach(slide => {
-            let lastTap = 0, isMobileZoomed = false;
-            let startX = 0, startY = 0, lastX = 0, lastY = 0, curX = 0, curY = 0, isDragging = false;
+            let lastTap = 0;
+            let isMobileZoomed = false;
+            let startX = 0, startY = 0;
+            let lastX = 0, lastY = 0;
+            let curX = 0, curY = 0;
+            let isDragging = false;
+            let rafId = null;
+            const scale = 2.2;
             const img = slide.querySelector('img');
             if (!img) return;
 
+            // GPU 帧渲染更新
+            const updateTransform = () => {
+                img.style.transform = `translate3d(${curX}px, ${curY}px, 0) scale(${scale})`;
+                rafId = null;
+            };
+
             slide.addEventListener('touchstart', (e) => {
                 if (window.innerWidth >= 992) return;
+
+                const currentTime = Date.now();
+                const tapLength = currentTime - lastTap;
+
+                // 双击事件触发
+                if (tapLength < 300 && tapLength > 0) {
+                    if (e.cancelable) e.preventDefault();
+                    isMobileZoomed = !isMobileZoomed;
+
+                    img.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                    lastX = 0; lastY = 0; curX = 0; curY = 0;
+
+                    if (isMobileZoomed) {
+                        if (gallery) gallery.style.overflowX = 'hidden';
+                        slide.style.touchAction = 'none'; // 禁用默认滚动手势，防止冲突
+                        img.style.transform = `translate3d(0px, 0px, 0) scale(${scale})`;
+                    } else {
+                        if (gallery) gallery.style.overflowX = 'auto';
+                        slide.style.touchAction = '';
+                        img.style.transform = 'translate3d(0px, 0px, 0) scale(1)';
+                    }
+                    lastTap = 0;
+                    return;
+                }
+                lastTap = currentTime;
+
+                // 拖拽按压开始
                 if (isMobileZoomed && e.touches.length === 1) {
                     isDragging = true;
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
-                    img.style.transition = 'none';
+                    img.style.transition = 'none'; // 实时跟手零延迟
                 }
-            }, { passive: true });
+            }, { passive: false });
 
             slide.addEventListener('touchmove', (e) => {
                 if (window.innerWidth >= 992) return;
+
                 if (isMobileZoomed && isDragging && e.touches.length === 1) {
-                    if (e.cancelable) e.preventDefault();
+                    if (e.cancelable) e.preventDefault(); // 阻止浏览器上下拉刷新/页面滚动
 
-                    curX = lastX + (e.touches[0].clientX - startX);
-                    curY = lastY + (e.touches[0].clientY - startY);
+                    const deltaX = e.touches[0].clientX - startX;
+                    const deltaY = e.touches[0].clientY - startY;
 
-                    const scale = 2.2;
+                    curX = lastX + deltaX;
+                    curY = lastY + deltaY;
+
+                    // 边缘受控限制
                     const maxX = (slide.clientWidth * (scale - 1)) / 2;
                     const maxY = (slide.clientHeight * (scale - 1)) / 2;
 
                     curX = Math.max(-maxX, Math.min(maxX, curX));
                     curY = Math.max(-maxY, Math.min(maxY, curY));
 
-                    img.style.transform = `translate(${curX}px, ${curY}px) scale(${scale})`;
+                    // requestAnimationFrame 硬件帧同步
+                    if (!rafId) {
+                        rafId = requestAnimationFrame(updateTransform);
+                    }
                 }
             }, { passive: false });
 
-            slide.addEventListener('touchend', (e) => {
+            slide.addEventListener('touchend', () => {
                 if (window.innerWidth >= 992) return;
 
                 if (isMobileZoomed && isDragging) {
                     isDragging = false;
-                    lastX = curX; lastY = curY;
-                    img.style.transition = 'transform 0.25s ease-out';
+                    lastX = curX;
+                    lastY = curY;
+                    if (rafId) {
+                        cancelAnimationFrame(rafId);
+                        rafId = null;
+                    }
+                    img.style.transition = 'transform 0.15s ease-out';
+                    img.style.transform = `translate3d(${curX}px, ${curY}px, 0) scale(${scale})`;
                 }
+            }, { passive: true });
 
-                const currentTime = Date.now();
-                if (currentTime - lastTap < 300 && currentTime - lastTap > 0) {
-                    if (e.cancelable) e.preventDefault();
-                    isMobileZoomed = !isMobileZoomed;
-
-                    img.style.transition = 'transform 0.25s ease-out';
-                    lastX = 0; lastY = 0; curX = 0; curY = 0;
-
-                    if (isMobileZoomed) {
-                        if (gallery) gallery.style.overflowX = 'hidden';
-                        img.style.transform = 'translate(0px, 0px) scale(2.2)';
-                    } else {
-                        if (gallery) gallery.style.overflowX = 'auto';
-                        img.style.transform = 'translate(0px, 0px) scale(1)';
+            slide.addEventListener('touchcancel', () => {
+                if (window.innerWidth >= 992) return;
+                if (isMobileZoomed && isDragging) {
+                    isDragging = false;
+                    lastX = curX;
+                    lastY = curY;
+                    if (rafId) {
+                        cancelAnimationFrame(rafId);
+                        rafId = null;
                     }
                 }
-                lastTap = currentTime;
             });
         });
 
