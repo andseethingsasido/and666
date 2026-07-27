@@ -160,6 +160,7 @@ layout: default
         aspect-ratio: 3 / 4;
         background-color: #f9f9f9;
         overflow: hidden;
+        touch-action: pan-x pan-y;
     }
 
     .pdp-slide img {
@@ -169,6 +170,7 @@ layout: default
         user-select: none;
         pointer-events: none;
         transition: transform 0.25s ease-out;
+        will-change: transform;
     }
 
     /* 🔍 PC 框内局部放大镜 */
@@ -449,22 +451,82 @@ layout: default
         }
 
         // --------------------------------------------------
-        // 2. 📱 移动端双击照片放大/缩小
+        // 2. 📱 移动端双击照片放大 + 自由拖拽滑动细节
         // --------------------------------------------------
         slides.forEach(slide => {
             let lastTap = 0;
             let isMobileZoomed = false;
             const img = slide.querySelector('img');
+            if (!img) return;
+
+            let startX = 0, startY = 0;
+            let lastX = 0, lastY = 0;
+            let curX = 0, curY = 0;
+            let isDragging = false;
+
+            slide.addEventListener('touchstart', function(e) {
+                if (window.innerWidth >= 992) return;
+
+                if (isMobileZoomed && e.touches.length === 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    img.style.transition = 'none'; // 拖拽时消除延迟，保证实时跟手
+                }
+            }, { passive: true });
+
+            slide.addEventListener('touchmove', function(e) {
+                if (window.innerWidth >= 992) return;
+
+                if (isMobileZoomed && isDragging && e.touches.length === 1) {
+                    const deltaX = e.touches[0].clientX - startX;
+                    const deltaY = e.touches[0].clientY - startY;
+
+                    if (e.cancelable) e.preventDefault();
+
+                    curX = lastX + deltaX;
+                    curY = lastY + deltaY;
+
+                    // 限制拖拽边界（按 2.2 倍放大比例计算）
+                    const scale = 2.2;
+                    const maxX = (slide.clientWidth * (scale - 1)) / 2;
+                    const maxY = (slide.clientHeight * (scale - 1)) / 2;
+
+                    curX = Math.max(-maxX, Math.min(maxX, curX));
+                    curY = Math.max(-maxY, Math.min(maxY, curY));
+
+                    img.style.transform = `translate(${curX}px, ${curY}px) scale(${scale})`;
+                }
+            }, { passive: false });
 
             slide.addEventListener('touchend', function(e) {
+                if (window.innerWidth >= 992) return;
+
+                if (isMobileZoomed && isDragging) {
+                    isDragging = false;
+                    lastX = curX;
+                    lastY = curY;
+                    img.style.transition = 'transform 0.25s ease-out';
+                }
+
                 const currentTime = new Date().getTime();
                 const tapLength = currentTime - lastTap;
 
+                // 双击判定（间隔小于 300 毫秒）
                 if (tapLength < 300 && tapLength > 0) {
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault();
                     isMobileZoomed = !isMobileZoomed;
-                    if (img) {
-                        img.style.transform = isMobileZoomed ? 'scale(2.2)' : 'scale(1)';
+
+                    if (isMobileZoomed) {
+                        if (gallery) gallery.style.overflowX = 'hidden'; // 锁定横向切图
+                        lastX = 0; lastY = 0; curX = 0; curY = 0;
+                        img.style.transition = 'transform 0.25s ease-out';
+                        img.style.transform = 'translate(0px, 0px) scale(2.2)';
+                    } else {
+                        if (gallery) gallery.style.overflowX = 'auto'; // 恢复正常切图
+                        lastX = 0; lastY = 0; curX = 0; curY = 0;
+                        img.style.transition = 'transform 0.25s ease-out';
+                        img.style.transform = 'translate(0px, 0px) scale(1)';
                     }
                 }
                 lastTap = currentTime;
