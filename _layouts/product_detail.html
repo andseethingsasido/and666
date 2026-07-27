@@ -276,7 +276,7 @@ layout: default
             align-items: center;
             padding: 20px 20px 80px;
             position: relative;
-            top: -22px;
+            top: -22px; /* 移动端向上微调 -22px */
         }
 
         .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
@@ -302,29 +302,28 @@ layout: default
         .pdp-wrapper {
             display: grid;
             grid-template-columns: 1fr 1.1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 0 50px;
+            gap: 50px;
             max-width: 1350px;
             min-height: 100vh;
             margin: 0 auto;
             padding: 0 40px;
-            align-content: center; /* 确保整体保持原有的垂直居中视觉 */
-            align-items: start;
+            align-items: center; /* 中间大图垂直居中 */
             box-sizing: border-box;
             position: relative;
-            top: -95px;
+            top: -95px; /* PC 端向上微调 -95px */
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 核心：PC端将左右栏打散为网格元素，共享第一行 (Row 1) 从而精准顶端对齐 */
+        /* 🎯 关键对齐设置：左右栏顶端对齐，并重置标题/按钮的顶部边距 */
         .pdp-col-left, .pdp-col-right {
-            display: contents;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-self: flex-start;
+            padding-top: 10px; /* 控制左右两侧相对于中间图片顶部的起步落差 */
         }
 
-        /* 第一行：产品名称 与 购买按钮 */
         .pdp-title { 
-            grid-column: 1;
-            grid-row: 1;
             font-size: 20px; 
             margin-top: 0;
             line-height: 1.2;
@@ -332,31 +331,11 @@ layout: default
         }
 
         .pdp-buy-btn {
-            grid-column: 3;
-            grid-row: 1;
             margin-top: 0;
             margin-bottom: 25px;
         }
 
-        /* 第二行：面料介绍 与 尺码表 */
-        .pdp-details-box {
-            grid-column: 1;
-            grid-row: 2;
-        }
-
-        .pdp-size-box {
-            grid-column: 3;
-            grid-row: 2;
-        }
-
-        /* 中间图：跨越两行并保持居中 */
-        .pdp-col-center { 
-            grid-column: 2;
-            grid-row: 1 / span 2;
-            align-self: center;
-            width: 100%; 
-        }
-
+        .pdp-col-center { width: 100%; }
         .pdp-gallery { overflow-x: hidden; }
 
         .pdp-wrapper.drawer-open {
