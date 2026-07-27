@@ -153,6 +153,7 @@ layout: default
     .pdp-gallery {
         display: flex;
         gap: 0;
+        width: 100%;
     }
 
     .pdp-slide {
@@ -288,6 +289,7 @@ layout: default
         .pdp-size-box { order: 5; width: 100%; }
 
         .pdp-gallery {
+            width: 100%; /* 关键修复：限制容器宽度为 100%，触发横向滚动 */
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
