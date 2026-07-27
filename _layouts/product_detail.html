@@ -21,13 +21,17 @@ layout: default
         </div>
     </div>
 
-    <!-- 中栏：产品图（0延迟切图 + 点击/双击放大） -->
+    <!-- 中栏：产品图（首图预加载 + 后续懒加载 + 局部放大/双击拖拽） -->
     <div class="pdp-col-center">
         <div class="pdp-gallery-container" id="galleryContainer">
             <div class="pdp-gallery" id="pdpGallery">
                 {% for img in page.gallery %}
                     <div class="pdp-slide">
-                        <img src="{{ img | relative_url }}" alt="{{ page.title }}">
+                        <img src="{{ img | relative_url }}" 
+                             alt="{{ page.title }}"
+                             loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                             fetchpriority="{% if forloop.first %}high{% else %}low{% endif %}"
+                             decoding="async">
                     </div>
                 {% endfor %}
             </div>
@@ -55,9 +59,9 @@ layout: default
             <div class="drawer-product-price">{{ page.price }}</div>
         </div>
 
-        <!-- 2. 中间：纯净二维码（无线条/无边框，上下留白） -->
+        <!-- 2. 中间：纯净二维码 -->
         <div class="qrcode-wrapper">
-            <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img">
+            <img src="{{ '/images/gozhonghao.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img" loading="lazy" decoding="async">
         </div>
 
         <!-- 3. 下方：扫码咨询提示 -->
@@ -69,7 +73,7 @@ layout: default
 </div>
 
 <style>
-    /* 全局与字体基础 */
+    /* 全局基础 */
     html, body {
         margin: 0;
         padding: 0;
@@ -77,7 +81,7 @@ layout: default
         min-height: 100vh;
     }
 
-    /* ⭐️ 默认（移动端）产品名称设为 13px */
+    /* 字体与基础组件 */
     .pdp-title {
         font-size: 13px;
         font-weight: 600;
@@ -102,7 +106,6 @@ layout: default
         transition: opacity 0.2s;
         margin-bottom: 25px;
     }
-
     .pdp-buy-btn:hover { opacity: 0.8; }
 
     .pdp-details-box, .pdp-size-box {
@@ -118,8 +121,6 @@ layout: default
         letter-spacing: 2px;
         text-transform: uppercase;
         margin: 0 0 12px 0;
-        padding-bottom: 0;
-        border-bottom: none;
         color: #000;
         font-weight: 600;
     }
@@ -139,10 +140,9 @@ layout: default
         text-align: center;
         font-size: 10px;
     }
-
     .pdp-size-box th { font-weight: 600; color: #000; text-transform: uppercase; }
 
-    /* 🖼️ 产品图与放大镜容器 */
+    /* 🖼️ 画廊容器 */
     .pdp-gallery-container {
         width: 100%;
         position: relative;
@@ -173,7 +173,7 @@ layout: default
         will-change: transform;
     }
 
-    /* 🔍 PC 框内局部放大镜 */
+    /* 🔍 PC 放大镜 */
     .pdp-zoom-lens {
         position: absolute;
         top: 0; left: 0;
@@ -186,12 +186,9 @@ layout: default
         background-position: 0% 0%;
         z-index: 10;
     }
-
     .pdp-zoom-lens.active { opacity: 1; }
 
-    /* -------------------------------------------------- */
-    /* 👉 极致极简右侧抽屉弹窗 (无关闭按钮 / 无框线) */
-    /* -------------------------------------------------- */
+    /* 👉 右侧抽屉弹窗 */
     .drawer-backdrop {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -202,11 +199,7 @@ layout: default
         pointer-events: none;
         transition: opacity 0.4s ease;
     }
-
-    .drawer-backdrop.active {
-        opacity: 1;
-        pointer-events: auto;
-    }
+    .drawer-backdrop.active { opacity: 1; pointer-events: auto; }
 
     .right-drawer {
         position: fixed;
@@ -227,19 +220,10 @@ layout: default
         box-sizing: border-box;
         touch-action: pan-y;
     }
+    .right-drawer.active { transform: translateX(0); }
 
-    .right-drawer.active {
-        transform: translateX(0);
-    }
-
-    .drawer-inner {
-        width: 100%;
-        text-align: center;
-    }
-
-    .drawer-header {
-        margin-bottom: 10px;
-    }
+    .drawer-inner { width: 100%; text-align: center; }
+    .drawer-header { margin-bottom: 10px; }
 
     .drawer-product-title {
         font-size: 13px;
@@ -257,23 +241,13 @@ layout: default
         color: #666;
     }
 
-    /* 🖼️ 二维码：去除边框线条，保留优美留白 */
-    .qrcode-wrapper {
-        text-align: center;
-        margin: 32px 0;
-    }
-
+    .qrcode-wrapper { text-align: center; margin: 32px 0; }
     .qrcode-img {
         width: 160px;
         height: 160px;
         filter: grayscale(100%);
         border: none;
-        padding: 0;
         display: inline-block;
-    }
-
-    .drawer-footer {
-        border-top: none;
     }
 
     .drawer-subtitle {
@@ -290,14 +264,11 @@ layout: default
         letter-spacing: 1px;
     }
 
-    /* 抽屉打开时中间产品图微缩 */
     .pdp-wrapper.drawer-open .pdp-gallery-container {
         transform: scale(0.82);
     }
 
-    /* -------------------------------------------------- */
-    /* 📱 移动端布局 (屏宽 < 992px) */
-    /* -------------------------------------------------- */
+    /* 📱 移动端布局 (< 992px) */
     @media (max-width: 991px) {
         .pdp-wrapper {
             display: flex;
@@ -305,7 +276,7 @@ layout: default
             align-items: center;
             padding: 20px 20px 80px;
             position: relative;
-            top: -22px; /* ⭐️ 移动端向上提升 -22px */
+            top: -22px; /* 移动端向上微调 -22px */
         }
 
         .pdp-col-left, .pdp-col-center, .pdp-col-right { display: contents; }
@@ -326,9 +297,7 @@ layout: default
         .pdp-slide { scroll-snap-align: start; }
     }
 
-    /* -------------------------------------------------- */
-    /* 💻 PC 端布局 (屏宽 >= 992px) */
-    /* -------------------------------------------------- */
+    /* 💻 PC 端布局 (>= 992px) */
     @media (min-width: 992px) {
         .pdp-wrapper {
             display: grid;
@@ -341,14 +310,11 @@ layout: default
             align-items: center;
             box-sizing: border-box;
             position: relative;
-            top: -95px; /* ⭐️ PC 端向上提升 -95px */
+            top: -95px; /* PC 端向上微调 -95px */
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* ⭐️ 仅 PC 端：产品名称字体为 20px */
-        .pdp-title {
-            font-size: 20px;
-        }
+        .pdp-title { font-size: 20px; }
 
         .pdp-col-left, .pdp-col-right {
             display: flex;
@@ -357,7 +323,6 @@ layout: default
         }
 
         .pdp-col-center { width: 100%; }
-
         .pdp-gallery { overflow-x: hidden; }
 
         .pdp-wrapper.drawer-open {
@@ -374,7 +339,7 @@ layout: default
         const slides = gallery ? gallery.querySelectorAll('.pdp-slide') : [];
         const zoomLens = document.getElementById('zoomLens');
 
-        // 🎨 SVG 鼠标指针 (16px)
+        // SVG 光标图标
         const leftArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="20" y1="12" x2="4" y2="12"></line><polyline points="11 5 4 12 11 19"></polyline></svg>') 8 8, w-resize`;
         const rightArrowCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="13 5 20 12 13 19"></polyline></svg>') 8 8, e-resize`;
         const plusCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3.5" stroke-linecap="square"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>') 8 8, zoom-in`;
@@ -383,18 +348,14 @@ layout: default
         let currentIndex = 0;
         let isZoomActive = false;
 
-        // --------------------------------------------------
-        // 1. PC 切图与点击放大
-        // --------------------------------------------------
+        // 1. PC 局部放大与切换
         if (galleryContainer && gallery && slides.length > 0) {
             galleryContainer.addEventListener('mousemove', (e) => {
                 if (window.innerWidth < 992) return;
 
                 const rect = galleryContainer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const ratioX = x / rect.width;
-                const ratioY = y / rect.height;
+                const ratioX = (e.clientX - rect.left) / rect.width;
+                const ratioY = (e.clientY - rect.top) / rect.height;
 
                 if (ratioX < 0.35) {
                     galleryContainer.style.cursor = leftArrowCursor;
@@ -418,8 +379,7 @@ layout: default
                 if (window.innerWidth < 992) return;
 
                 const rect = galleryContainer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const ratioX = x / rect.width;
+                const ratioX = (e.clientX - rect.left) / rect.width;
 
                 if (ratioX < 0.35) {
                     isZoomActive = false;
@@ -434,11 +394,10 @@ layout: default
                 } else {
                     isZoomActive = !isZoomActive;
                     if (isZoomActive && zoomLens) {
-                        const currentImg = slides[currentIndex] ? slides[currentIndex].querySelector('img') : null;
+                        const currentImg = slides[currentIndex]?.querySelector('img');
                         if (currentImg) {
                             zoomLens.style.backgroundImage = `url('${currentImg.src}')`;
-                            const y = e.clientY - rect.top;
-                            zoomLens.style.backgroundPosition = `${ratioX * 100}% ${(y / rect.height) * 100}%`;
+                            zoomLens.style.backgroundPosition = `${ratioX * 100}% ${((e.clientY - rect.top) / rect.height) * 100}%`;
                             zoomLens.classList.add('active');
                             galleryContainer.style.cursor = minusCursor;
                         }
@@ -450,44 +409,31 @@ layout: default
             });
         }
 
-        // --------------------------------------------------
-        // 2. 📱 移动端双击照片放大 + 自由拖拽滑动细节
-        // --------------------------------------------------
+        // 2. 📱 移动端双击放大 + 拖拽细节
         slides.forEach(slide => {
-            let lastTap = 0;
-            let isMobileZoomed = false;
+            let lastTap = 0, isMobileZoomed = false;
+            let startX = 0, startY = 0, lastX = 0, lastY = 0, curX = 0, curY = 0, isDragging = false;
             const img = slide.querySelector('img');
             if (!img) return;
 
-            let startX = 0, startY = 0;
-            let lastX = 0, lastY = 0;
-            let curX = 0, curY = 0;
-            let isDragging = false;
-
-            slide.addEventListener('touchstart', function(e) {
+            slide.addEventListener('touchstart', (e) => {
                 if (window.innerWidth >= 992) return;
-
                 if (isMobileZoomed && e.touches.length === 1) {
                     isDragging = true;
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
-                    img.style.transition = 'none'; // 拖拽时消除延迟，保证实时跟手
+                    img.style.transition = 'none';
                 }
             }, { passive: true });
 
-            slide.addEventListener('touchmove', function(e) {
+            slide.addEventListener('touchmove', (e) => {
                 if (window.innerWidth >= 992) return;
-
                 if (isMobileZoomed && isDragging && e.touches.length === 1) {
-                    const deltaX = e.touches[0].clientX - startX;
-                    const deltaY = e.touches[0].clientY - startY;
-
                     if (e.cancelable) e.preventDefault();
 
-                    curX = lastX + deltaX;
-                    curY = lastY + deltaY;
+                    curX = lastX + (e.touches[0].clientX - startX);
+                    curY = lastY + (e.touches[0].clientY - startY);
 
-                    // 限制拖拽边界（按 2.2 倍放大比例计算）
                     const scale = 2.2;
                     const maxX = (slide.clientWidth * (scale - 1)) / 2;
                     const maxY = (slide.clientHeight * (scale - 1)) / 2;
@@ -499,33 +445,28 @@ layout: default
                 }
             }, { passive: false });
 
-            slide.addEventListener('touchend', function(e) {
+            slide.addEventListener('touchend', (e) => {
                 if (window.innerWidth >= 992) return;
 
                 if (isMobileZoomed && isDragging) {
                     isDragging = false;
-                    lastX = curX;
-                    lastY = curY;
+                    lastX = curX; lastY = curY;
                     img.style.transition = 'transform 0.25s ease-out';
                 }
 
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-
-                // 双击判定（间隔小于 300 毫秒）
-                if (tapLength < 300 && tapLength > 0) {
+                const currentTime = Date.now();
+                if (currentTime - lastTap < 300 && currentTime - lastTap > 0) {
                     if (e.cancelable) e.preventDefault();
                     isMobileZoomed = !isMobileZoomed;
 
+                    img.style.transition = 'transform 0.25s ease-out';
+                    lastX = 0; lastY = 0; curX = 0; curY = 0;
+
                     if (isMobileZoomed) {
-                        if (gallery) gallery.style.overflowX = 'hidden'; // 锁定横向切图
-                        lastX = 0; lastY = 0; curX = 0; curY = 0;
-                        img.style.transition = 'transform 0.25s ease-out';
+                        if (gallery) gallery.style.overflowX = 'hidden';
                         img.style.transform = 'translate(0px, 0px) scale(2.2)';
                     } else {
-                        if (gallery) gallery.style.overflowX = 'auto'; // 恢复正常切图
-                        lastX = 0; lastY = 0; curX = 0; curY = 0;
-                        img.style.transition = 'transform 0.25s ease-out';
+                        if (gallery) gallery.style.overflowX = 'auto';
                         img.style.transform = 'translate(0px, 0px) scale(1)';
                     }
                 }
@@ -533,41 +474,30 @@ layout: default
             });
         });
 
-        // --------------------------------------------------
-        // 3. 👉 右侧抽屉弹窗（向右滑动 & 点击外部收回）
-        // --------------------------------------------------
+        // 3. 右侧抽屉弹窗
         const rightDrawer = document.getElementById('rightDrawer');
         const drawerBackdrop = document.getElementById('drawerBackdrop');
         const openBtn = document.getElementById('openModalBtn');
 
-        function openDrawer() {
-            if (rightDrawer) rightDrawer.classList.add('active');
-            if (drawerBackdrop) drawerBackdrop.classList.add('active');
-            if (pdpWrapper) pdpWrapper.classList.add('drawer-open');
-        }
+        const toggleDrawer = (active) => {
+            rightDrawer?.classList.toggle('active', active);
+            drawerBackdrop?.classList.toggle('active', active);
+            pdpWrapper?.classList.toggle('drawer-open', active);
+        };
 
-        function closeDrawer() {
-            if (rightDrawer) rightDrawer.classList.remove('active');
-            if (drawerBackdrop) drawerBackdrop.classList.remove('active');
-            if (pdpWrapper) pdpWrapper.classList.remove('drawer-open');
-        }
+        if (openBtn) openBtn.addEventListener('click', () => toggleDrawer(true));
+        if (drawerBackdrop) drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
 
-        if (openBtn) openBtn.addEventListener('click', openDrawer);
-        if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
-
-        // 📱/💻 监听右滑（Swipe Right）手势关闭抽屉
+        // 右滑关闭手势
         let touchStartX = 0;
-        let touchEndX = 0;
-
         if (rightDrawer) {
             rightDrawer.addEventListener('touchstart', (e) => {
                 touchStartX = e.changedTouches[0].screenX;
             }, { passive: true });
 
             rightDrawer.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (touchEndX - touchStartX > 50) {
-                    closeDrawer();
+                if (e.changedTouches[0].screenX - touchStartX > 50) {
+                    toggleDrawer(false);
                 }
             }, { passive: true });
         }
