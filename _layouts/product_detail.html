@@ -59,9 +59,9 @@ layout: default
             <div class="drawer-product-price">{{ page.price }}</div>
         </div>
 
-        <!-- 2. 中间：纯净二维码 (已更新为 30c1b9c39cf9f2946b49f5b1579dc18c.jpg) -->
+        <!-- 2. 中间：纯净二维码 (调用 images/grwx.webp) -->
         <div class="qrcode-wrapper">
-            <img src="{{ '/images/30c1b9c39cf9f2946b49f5b1579dc18c.jpg' | relative_url }}" alt="微信二维码" class="qrcode-img" loading="lazy" decoding="async">
+            <img src="{{ '/images/grwx.webp' | relative_url }}" alt="微信二维码" class="qrcode-img" loading="lazy" decoding="async">
         </div>
 
         <!-- 3. 下方：扫码咨询提示 -->
@@ -461,7 +461,7 @@ layout: default
                     } else {
                         if (gallery) gallery.style.overflowX = 'auto';
                         slide.style.touchAction = '';
-                        img.style.transform = `translate3d(0px, 0px, 0) scale(1)`;
+                        img.style.transform = 'translate3d(0px, 0px, 0) scale(1)';
                     }
                     lastTap = 0;
                     return;
